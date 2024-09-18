@@ -10,18 +10,18 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 @Service
 public class UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public UUID createUser(CreateUserDto createUserDto){
-
-        //DTO -> ENTITY
+    public UUID createUser(CreateUserDto createUserDto) {
+        // DTO -> ENTITY
         var entity = new User(
                 UUID.randomUUID(),
                 createUserDto.nome(),
@@ -37,12 +37,11 @@ public class UserService {
                 createUserDto.numero(),
                 createUserDto.genero(),
                 createUserDto.dataNascimento(),
-                null,
+                Instant.now(),
                 Instant.now()
         );
 
         var userSaved = userRepository.save(entity);
-
         return userSaved.getId();
     }
 
@@ -50,44 +49,42 @@ public class UserService {
         return userRepository.findById(UUID.fromString(userId));
     }
 
-    public List<User> listUsers(){
+    public List<User> listUsers() {
         return userRepository.findAll();
     }
 
-    public void updateUserById(String userId, UpdateUserDto updateUserDto){
-
+    public void updateUserById(String userId, UpdateUserDto updateUserDto) {
         var id = UUID.fromString(userId);
 
-        var userExists = userRepository.findById(id);
+        userRepository.findById(id).ifPresent(user -> {
+            boolean updated = false;
 
-        if(userExists.isPresent()){
-            var user = userExists.get();
-
-            if(updateUserDto.senha() != null){
+            if (updateUserDto.senha() != null) {
                 user.setSenha(updateUserDto.senha());
+                updated = true;
             }
 
-            if(updateUserDto.celular() != null){
+            if (updateUserDto.celular() != null) {
                 user.setCelular(updateUserDto.celular());
+                updated = true;
             }
 
-            if(updateUserDto.dataNascimento() != null){
+            if (updateUserDto.dataNascimento() != null) {
                 user.setDataNascimento(updateUserDto.dataNascimento());
+                updated = true;
             }
 
-            userRepository.save(user);
-        }
+            if (updated) {
+                user.setDataAtualizacao(Instant.now());
+                userRepository.save(user);
+            }
+        });
     }
 
-    public void deleteById(String userId){
+    public void deleteById(String userId) {
         var id = UUID.fromString(userId);
-
-        var userExists = userRepository.existsById(id);
-
-        if(userExists){
+        if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
         }
-
     }
-
 }

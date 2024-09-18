@@ -1,22 +1,18 @@
 import React from 'react';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box'; // Importando o Box
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 function App() {
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="100vh" // Ocupa a tela inteira
-    >
-      <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-      <Button variant="contained" color="primary" style={{ marginTop: '20px' }}>
-        Meu Botão
-      </Button>
-    </Box>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
+      <Footer />
+    </Router>
   );
 }
 
