@@ -1,11 +1,13 @@
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Loader, useGLTF, OrbitControls, PerspectiveCamera, Stars } from '@react-three/drei';
-import './Home.css';
+import { Link } from 'react-router-dom'; // Importação do Link
+import './Home.css'; // Importação existente
+import '../components/Header.css'; // Caminho corrigido para a nova folha de estilos
 import sceneGlb from '../assets/scene.glb';
 
 function Model({ url }) {
-    const { nodes } = useGLTF(url)
+    const { nodes } = useGLTF(url);
     return (
         <group rotation={[-Math.PI / 2, 0, 0]} position={[0, -7, 0]} scale={7}>
             <group rotation={[Math.PI / 13.5, -Math.PI / 5.8, Math.PI / 5.6]}>
@@ -13,14 +15,26 @@ function Model({ url }) {
                 <mesh geometry={nodes.planet003.geometry} material={nodes.planet003.material} />
             </group>
         </group>
-    )
+    );
 }
 
 export default function Home() {
     return (
         <>
             <div className="bg" />
-            <h1>EstágioJá <p style={{ letterSpacing: '1px', fontSize: '40pt', textShadow: '#000000b8 1px 1px 5px' }}>Explore oportunidades que vão impulsionar sua trajetória profissional e prepare-se para o futuro!</p> </h1>
+            <h1>
+                EstágioJá
+                <p style={{ letterSpacing: '1px', fontSize: '40pt', textShadow: '#000000b8 1px 1px 5px' }}>
+                    Explore oportunidades que vão impulsionar sua trajetória profissional e prepare-se para o futuro!
+                </p>
+            </h1>
+
+            <Link to="/login" className="btn btn-1">
+                <svg>
+                    <rect x="0" y="0" fill="none" width="100%" height="100%" />
+                </svg>
+                Entrar
+            </Link>
 
             <Canvas dpr={[1.5, 2]} linear shadows>
                 <fog attach="fog" args={['#272730', 16, 30]} />
@@ -38,5 +52,5 @@ export default function Home() {
             <div className="layer" />
             <Loader />
         </>
-    )
+    );
 }

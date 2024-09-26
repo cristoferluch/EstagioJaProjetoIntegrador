@@ -1,0 +1,13 @@
+/* LoginScreen.css */
+
+.input-container {
+    display: flex;             /* Define um contêiner flexível */
+    flex-direction: column;   /* Coloca os itens em uma coluna */
+    align-items: center;      /* Alinha os itens no centro */
+    margin: 0 auto;          /* Centraliza horizontalmente (opcional) */
+  }
+  
+  .input-container .MuiTextField-root {
+    margin-bottom: 16px;      /* Espaçamento entre os campos */
+  }
+  
