@@ -56,11 +56,12 @@ public class UserService {
     public void updateUserById(String userId, UpdateUserDto updateUserDto) {
         var id = UUID.fromString(userId);
 
+
         userRepository.findById(id).ifPresent(user -> {
             boolean updated = false;
 
-            if (updateUserDto.senha() != null) {
-                user.setSenha(updateUserDto.senha());
+            if(updateUserDto.email() != null){
+                user.setEmail(updateUserDto.email());
                 updated = true;
             }
 
@@ -69,8 +70,33 @@ public class UserService {
                 updated = true;
             }
 
-            if (updateUserDto.dataNascimento() != null) {
-                user.setDataNascimento(updateUserDto.dataNascimento());
+            if (updateUserDto.senha() != null) {
+                user.setSenha(updateUserDto.senha());
+                updated = true;
+            }
+
+            if(updateUserDto.uf() != null){
+                user.setUf(updateUserDto.uf());
+                updated = true;
+            }
+
+            if(updateUserDto.municipio() != null){
+                user.setMunicipio(updateUserDto.municipio());
+                updated = true;
+            }
+
+            if(updateUserDto.endereco() != null){
+                user.setEndereco(updateUserDto.endereco());
+                updated = true;
+            }
+
+            if(updateUserDto.bairro() != null){
+                user.setBairro(updateUserDto.bairro());
+                updated = true;
+            }
+
+            if(updateUserDto.numero() != null){
+                user.setNumero(Integer.parseInt(updateUserDto.numero()));
                 updated = true;
             }
 

@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@Table(name = "\"users\"")
 public class User {
 
     @Id
@@ -26,7 +27,7 @@ public class User {
     @Column(name = "celular")
     private String celular;
 
-    @Column(name = "cpf")
+    @Column(name = "cpf", unique = true)
     private String cpf;
 
     @Column(name = "senha")
@@ -45,7 +46,7 @@ public class User {
     private String bairro;
 
     @Column(name = "numero")
-    private String numero;
+    private int numero;
 
     @Column(name = "genero")
     private String genero;
@@ -53,11 +54,11 @@ public class User {
     @Column(name = "data_nascimento")
     private String dataNascimento;
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @Column(name = "data_atualizacao")
     private Instant dataAtualizacao;
 
-    @UpdateTimestamp
+    @CreationTimestamp
     @Column(name = "data_inclusao")
     private Instant dataInclusao;
 
@@ -65,7 +66,7 @@ public class User {
     }
 
     public User(UUID id, String nome, String sobrenome, String email, String celular, String cpf, String senha, String uf,
-                String municipio, String endereco, String bairro, String numero, String genero, String dataNascimento,
+                String municipio, String endereco, String bairro, int numero, String genero, String dataNascimento,
                 Instant dataAtualizacao, Instant dataInclusao) {
         this.id = id;
         this.nome = nome;
@@ -98,9 +99,7 @@ public class User {
     public String getSobrenome() {
         return sobrenome;
     }
-    public void setSobrenome(String sobrenome) {
-        this.sobrenome = sobrenome;
-    }
+    public void setSobrenome(String sobrenome) {this.sobrenome = sobrenome;}
     public String getEmail() {return email;}
     public void setEmail(String email) {
         this.email = email;
@@ -128,9 +127,7 @@ public class User {
     public String getMunicipio() {
         return municipio;
     }
-    public void setMunicipio(String municipio) {
-        this.municipio = municipio;
-    }
+    public void setMunicipio(String municipio) {this.municipio = municipio;}
     public String getEndereco() {
         return endereco;
     }
@@ -143,10 +140,10 @@ public class User {
     public void setBairro(String bairro) {
         this.bairro = bairro;
     }
-    public String getNumero() {
+    public int getNumero() {
         return numero;
     }
-    public void setNumero(String numero) {
+    public void setNumero(int numero) {
         this.numero = numero;
     }
     public String getGenero() {
@@ -168,7 +165,5 @@ public class User {
         this.dataAtualizacao = dataAtualizacao;
     }
     public Instant getDataInclusao() {return dataInclusao;}
-    public void setDataInclusao(Instant dataInclusao) {
-        this.dataInclusao = dataInclusao;
-    }
+    public void setDataInclusao(Instant dataInclusao) {this.dataInclusao = dataInclusao;}
 }

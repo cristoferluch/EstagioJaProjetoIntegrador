@@ -1,6 +1,8 @@
 package com.example.estagioja.estagioja.controller;
 
-public record UpdateUserDto(String celular, String senha, String dataNascimento) {
+import java.time.Instant;
+import java.util.UUID;
 
+public record UpdateUserDto(String email, String celular, String senha, String uf,String municipio, String endereco, String bairro, String numero) {
 
 }

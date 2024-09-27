@@ -3,6 +3,8 @@ import { Canvas } from '@react-three/fiber';
 import { Loader, useGLTF, OrbitControls, PerspectiveCamera, Stars } from '@react-three/drei';
 import './Home.css';
 import sceneGlb from '../assets/scene.glb';
+import Button from '@mui/material/Button';
+import zIndex from '@mui/material/styles/zIndex';
 
 function Model({ url }) {
     const { nodes } = useGLTF(url)
@@ -20,14 +22,16 @@ export default function Home() {
     return (
         <>
             <div className="bg" />
-            <h1>EstágioJá <p style={{ letterSpacing: '1px', fontSize: '40pt', textShadow: '#000000b8 1px 1px 5px' }}>Explore oportunidades que vão impulsionar sua trajetória profissional e prepare-se para o futuro!</p> </h1>
+            <h1>EstágioJá <p style={{ letterSpacing: '1px', fontSize: '38pt', textShadow: '#000000b8 1px 1px 5px' }}>Explore oportunidades que vão  impulsionar sua trajetória profissional e prepare-se para o futuro!</p><Button variant="contained" style={{zIndex:9999}}>Ver vagas</Button></h1>
+            
+
 
             <Canvas dpr={[1.5, 2]} linear shadows>
                 <fog attach="fog" args={['#272730', 16, 30]} />
-                <ambientLight intensity={0.75} />
-                <PerspectiveCamera makeDefault position={[0, 5, 16]} fov={83}>
+                <ambientLight intensity={1} />
+                <PerspectiveCamera makeDefault position={[0, 5, 13]} fov={90}>
                     <pointLight intensity={1500} position={[-15, 10, -10]} />
-                    <spotLight castShadow intensity={2.25} angle={0.2} penumbra={1} position={[-25, 20, -15]} shadow-mapSize={[1024, 1024]} shadow-bias={-0.0001} />
+                    <spotLight castShadow intensity={4.25} angle={0.2} penumbra={5} position={[-25, 20, -15]} shadow-mapSize={[2048, 2048]} shadow-bias={-0.0005} />
                 </PerspectiveCamera>
                 <Suspense fallback={null}>
                     <Model url={sceneGlb} />
