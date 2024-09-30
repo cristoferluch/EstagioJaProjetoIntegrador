@@ -12,8 +12,6 @@ canvas {
 
 }
 
-
-
 body {
     background: #171717;
     font-family: 'Inter var', sans-serif;
@@ -35,75 +33,31 @@ h1 {
     line-height: 0.6em;
     letter-spacing: -2px;
     text-align: left;
+    z-index: 9999;
 }
 
-h1>span {
-    white-space: pre;
-}
-
-.layer {
-    position: absolute;
-    bottom: 0;
+.canvas-stars {
+    position: fixed;
+    top: 0;
     left: 0;
-    width: 100%;
-    height: calc(100% - 60px);
-    background: linear-gradient(0deg, rgba(63, 12, 88, 0.25) 0%, transparent 100%);
-    pointer-events: none;
-}
-
-span.header {
-    font-weight: 700;
-    position: absolute;
-    display: inline-block;
-    width: 500px;
-    transform: translate3d(0, -50%, 0);
-    font-size: 9em;
-    line-height: 0.9em;
-    pointer-events: none;
-    top: 350px;
-    left: 50px;
-}
-
-span.header-left {
-    font-family: 'Josefin Sans', sans-serif;
-    font-weight: 700;
-    position: absolute;
-    display: inline-block;
-    transform: translate3d(0, -50%, 0);
-    line-height: 1em;
-    top: 200px;
-    left: 60px;
-    font-size: 4em;
-    width: 200px;
-}
-
-a {
-    font-weight: 400;
-    font-size: 14px;
-    color: inherit;
-    position: absolute;
-    display: inline;
-    text-decoration: none;
+    width: 100vw;
+    height: 100vh;
     z-index: 1;
-    color: white;
 }
 
-a.top-left {
-    top: 60px;
-    left: 60px;
+.canvas-rocket {
+    position: fixed;
+    right: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100vw;
+    top: 100px;
+    z-index: 1;
 }
 
-a.top-right {
-    top: 60px;
-    right: 60px;
-}
-
-a.bottom-left {
-    bottom: 60px;
-    left: 60px;
-}
-
-a.bottom-right {
-    bottom: 60px;
-    right: 60px;
+canvas {
+    width: 100%;
+    height: 100%;
 }
