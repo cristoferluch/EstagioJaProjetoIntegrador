@@ -1,0 +1,39 @@
+.input-container {
+    display: flex;       
+    flex-direction: column;  
+    align-items: center;    
+    margin: 0 auto;        
+  }
+  
+  .input-container .MuiTextField-root {
+    margin-bottom: 16px;
+  }
+  
+  .blinking-text {
+    display: flex;
+    flex-direction: column; /* Coloca os textos um abaixo do outro */
+    justify-content: center; /* Centraliza verticalmente */
+    align-items: center; /* Centraliza horizontalmente */
+    height: 100vh; /* Garante que ocupe toda a altura da viewport */
+    position: relative; /* Necessário para usar position: absolute nos h1 */
+  }
+  
+  .blinking-text h1 {
+    position: absolute; /* Mantém a posição absoluta */
+    top: 50%; /* Centraliza verticalmente */
+    left: 30%; /* Centraliza horizontalmente */
+    transform: translate(-50%, -50%); /* Ajusta para centralização exata */
+    font-weight: 900; /* Peso da fonte */
+    font-size: 5em; /* Tamanho da fonte */
+    margin: 0; /* Remove margens para melhor centralização */
+    color: peru; /* Cor do texto */
+    line-height: 0.6em; /* Altura da linha */
+    letter-spacing: -2px; /* Espaçamento entre letras */
+    text-align: center; /* Centraliza o texto horizontalmente */
+    opacity: 0; /* Começa invisível */
+    transition: opacity 1s ease-in-out; /* Efeito de transição */
+  }
+  
+  .blinking-text h1.visible {
+    opacity: 1; /* Mostra o texto quando visível */
+  }
