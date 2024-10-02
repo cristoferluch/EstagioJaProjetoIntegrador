@@ -1,48 +1,35 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import './LoginScreen.css';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import './LoginScreen.css';
 
-const BlinkingText = () => {
-  const [visibleText, setVisibleText] = useState('estagio');
-
-  useEffect(() => {
-    const timeout1 = setTimeout(() => {
-      setVisibleText('ja');
-    }, 2000);
-
-    const timeout2 = setTimeout(() => {
-      setVisibleText('estagio');
-    }, 4000);
-
-    return () => {
-      clearTimeout(timeout1);
-      clearTimeout(timeout2);
-    };
-  }, [visibleText]);
-
+const TypingText = () => {
   return (
-    <Box className="blinking-text">
-      <h1 className={visibleText === 'estagio' ? 'visible' : ''}>Estágio</h1>
-      <h1 className={visibleText === 'ja' ? 'visible' : ''}>Já</h1>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+      <h1 id="esquerda">Estágio</h1>
+      <h1 id="direita">Já</h1>
     </Box>
   );
 };
 
 export default function BasicTextFields() {
   return (
-    <Box
-      sx={{ display: 'flex', height: '100vh', backgroundColor: 'white' }}
-    >
-      <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <BlinkingText />
+    <Box sx={{ display: 'flex', height: '100vh', backgroundColor: 'white' }}>
+      <Box
+        sx={{
+          flex: 0.3, // 30% para a esquerda
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <TypingText />
       </Box>
 
       <Box
         sx={{
-          flex: 1,
+          flex: 0.7, // 70% para a direita
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -51,19 +38,19 @@ export default function BasicTextFields() {
       >
         <h2 style={{ marginBottom: '20px', color: 'black' }}>Login</h2>
         <div className="input-container">
-          <TextField 
-            id="outlined-basic" 
-            label="E-mail" 
-            variant="outlined" 
+          <TextField
+            id="outlined-basic"
+            label="E-mail"
+            variant="outlined"
             InputLabelProps={{
-              sx: { 
+              sx: {
                 color: 'black',
                 '&.Mui-focused': {
                   color: 'black',
                 },
               },
             }}
-            sx={{ 
+            sx={{
               width: '300px',
               backgroundColor: 'transparent',
               '& .MuiOutlinedInput-root': {
@@ -85,15 +72,15 @@ export default function BasicTextFields() {
             label="Senha"
             defaultValue=""
             InputLabelProps={{
-              sx: { 
+              sx: {
                 color: 'black',
                 '&.Mui-focused': {
                   color: 'black',
                 },
               },
             }}
-            sx={{ 
-              width: '300px', 
+            sx={{
+              width: '300px',
               backgroundColor: 'transparent',
               '& .MuiOutlinedInput-root': {
                 '& fieldset': {
@@ -106,17 +93,17 @@ export default function BasicTextFields() {
                   borderColor: 'black',
                 },
               },
-            }} 
+            }}
           />
         </div>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           sx={{ width: '200px', backgroundColor: 'black', color: 'white', marginTop: '16px' }}
         >
           Entrar
         </Button>
-        <Button 
-          variant="outlined" 
+        <Button
+          variant="outlined"
           sx={{ width: '200px', borderColor: 'black', color: 'black', marginTop: '8px' }}
         >
           Cadastrar
