@@ -4,7 +4,10 @@ import com.example.estagioja.estagioja.controller.CreateUserDto;
 import com.example.estagioja.estagioja.controller.UpdateUserDto;
 import com.example.estagioja.estagioja.entity.User;
 import com.example.estagioja.estagioja.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -15,13 +18,15 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    @Autowired
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public UUID createUser(CreateUserDto createUserDto) {
-        // DTO -> ENTITY
         var entity = new User(
                 UUID.randomUUID(),
                 createUserDto.nome(),
@@ -29,7 +34,7 @@ public class UserService {
                 createUserDto.email(),
                 createUserDto.celular(),
                 createUserDto.cpf(),
-                createUserDto.senha(),
+                passwordEncoder.encode(createUserDto.senha()),
                 createUserDto.uf(),
                 createUserDto.municipio(),
                 createUserDto.endereco(),
@@ -44,23 +49,14 @@ public class UserService {
         var userSaved = userRepository.save(entity);
         return userSaved.getId();
     }
-
-    public Optional<User> getUserById(String userId) {
-        return userRepository.findById(UUID.fromString(userId));
-    }
-
-    public List<User> listUsers() {
-        return userRepository.findAll();
-    }
-
+    @Transactional
     public void updateUserById(String userId, UpdateUserDto updateUserDto) {
         var id = UUID.fromString(userId);
-
 
         userRepository.findById(id).ifPresent(user -> {
             boolean updated = false;
 
-            if(updateUserDto.email() != null){
+            if (updateUserDto.email() != null) {
                 user.setEmail(updateUserDto.email());
                 updated = true;
             }
@@ -71,31 +67,32 @@ public class UserService {
             }
 
             if (updateUserDto.senha() != null) {
-                user.setSenha(updateUserDto.senha());
+                // Criptografar a nova senha
+                user.setSenha(passwordEncoder.encode(updateUserDto.senha()));
                 updated = true;
             }
 
-            if(updateUserDto.uf() != null){
+            if (updateUserDto.uf() != null) {
                 user.setUf(updateUserDto.uf());
                 updated = true;
             }
 
-            if(updateUserDto.municipio() != null){
+            if (updateUserDto.municipio() != null) {
                 user.setMunicipio(updateUserDto.municipio());
                 updated = true;
             }
 
-            if(updateUserDto.endereco() != null){
+            if (updateUserDto.endereco() != null) {
                 user.setEndereco(updateUserDto.endereco());
                 updated = true;
             }
 
-            if(updateUserDto.bairro() != null){
+            if (updateUserDto.bairro() != null) {
                 user.setBairro(updateUserDto.bairro());
                 updated = true;
             }
 
-            if(updateUserDto.numero() != null){
+            if (updateUserDto.numero() != null) {
                 user.setNumero(Integer.parseInt(updateUserDto.numero()));
                 updated = true;
             }
@@ -107,10 +104,19 @@ public class UserService {
         });
     }
 
+    @Transactional // Adicionando transação
     public void deleteById(String userId) {
         var id = UUID.fromString(userId);
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
         }
+    }
+
+    public Optional<User> getUserById(String userId) {
+        return userRepository.findById(UUID.fromString(userId));
+    }
+
+    public List<User> listUsers() {
+        return userRepository.findAll();
     }
 }
