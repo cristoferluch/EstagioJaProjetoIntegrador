@@ -21,7 +21,7 @@ export default function Home() {
     return (
         <>
             <div className="bg" />
-            <h1>EstágioJá <p style={{ letterSpacing: '1px', fontSize: '38pt', textShadow: '#000000b8 1px 1px 5px' }}>Explore oportunidades que vão impulsionar sua trajetória profissional e prepare-se para o futuro!</p><Button variant="contained" style={{ zIndex: 9999 }}>Ver vagas</Button></h1>
+            <h1>EstágioJá <p style={{ letterSpacing: '1px', fontSize: '38pt', textShadow: '#000000b8 1px 1px 5px' }}>Explore oportunidades que vão impulsionar sua trajetória profissional e prepare-se para o futuro!</p></h1>
 
             <div className="canvas-stars">
                 <Canvas dpr={[1.5, 2]} linear shadows>

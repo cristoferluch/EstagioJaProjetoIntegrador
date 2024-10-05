@@ -1,6 +1,9 @@
 package com.example.estagioja.estagioja.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -8,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -17,9 +21,11 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User implements UserDetails {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(name = "nome")
@@ -28,16 +34,22 @@ public class User implements UserDetails {
     @Column(name = "sobrenome")
     private String sobrenome;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
+    @NotNull
+    @Email
     private String email;
 
     @Column(name = "senha")
+    @NotNull
+    @Size(min = 6)
     private String senha;
 
     @Column(name = "celular")
     private String celular;
 
     @Column(name = "cpf", unique = true)
+    @NotNull
+    @Size(min = 11, max = 11)
     private String cpf;
 
     @Column(name = "uf")
@@ -59,7 +71,7 @@ public class User implements UserDetails {
     private String genero;
 
     @Column(name = "data_nascimento")
-    private String dataNascimento;
+    private LocalDate dataNascimento;
 
     @UpdateTimestamp
     @Column(name = "data_atualizacao")
@@ -68,7 +80,6 @@ public class User implements UserDetails {
     @CreationTimestamp
     @Column(name = "data_inclusao")
     private Instant dataInclusao;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
