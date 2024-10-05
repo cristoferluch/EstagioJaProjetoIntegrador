@@ -1,7 +1,7 @@
 package com.example.estagioja.estagioja.service;
 
-import com.example.estagioja.estagioja.controller.CreateUserDto;
-import com.example.estagioja.estagioja.controller.UpdateUserDto;
+import com.example.estagioja.estagioja.controller.user.CreateUserDto;
+import com.example.estagioja.estagioja.controller.user.UpdateUserDto;
 import com.example.estagioja.estagioja.entity.User;
 import com.example.estagioja.estagioja.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

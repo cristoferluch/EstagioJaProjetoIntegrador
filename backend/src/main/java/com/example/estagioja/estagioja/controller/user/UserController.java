@@ -1,4 +1,4 @@
-package com.example.estagioja.estagioja.controller;
+package com.example.estagioja.estagioja.controller.user;
 
 import com.example.estagioja.estagioja.entity.User;
 import com.example.estagioja.estagioja.service.UserService;
