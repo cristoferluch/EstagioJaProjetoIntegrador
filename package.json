@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "react-input-mask": "^2.0.4",
+    "sweetalert2": "^11.14.1"
+  }
+}
