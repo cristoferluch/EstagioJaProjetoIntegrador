@@ -19,7 +19,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{companyId}")
-    public ResponseEntity<Company> getCompanyById(@PathVariable("companyId") String companyId) {
+    public ResponseEntity<Company> getCompanyById(@PathVariable("companyId") String companyId) throws Exception  {
         var Company = this.companyService.getCompanyById(companyId);
 
         //Verifica se o usuario existe

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
 import './LoginScreen.css';
 import image from '../assets/login.gif';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import {FormControlLabel} from "@mui/material";
 
 const LoginForm = () => {
 
@@ -14,6 +16,7 @@ const LoginForm = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
+        isCompany: 'off'
     })
 
     const handleRegisterClick = () => {
@@ -44,7 +47,9 @@ const LoginForm = () => {
         });
 
         try {
-            const response = await fetch('http://localhost:8080/auth/login', {
+            let urlRequest = formData.isCompany === 'off' ? 'http://localhost:8080/auth/login/user' : 'http://localhost:8080/auth/login/company';
+
+            const response = await fetch(urlRequest, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -63,7 +68,7 @@ const LoginForm = () => {
             } else {
                 Toast.fire({
                     icon: "success",
-                    title: "Usuário logado com sucesso!",
+                    title: formData.isCompany === 'off' ? "Usuário logado com sucesso!" : "Empresa logado com sucesso!",
                 });
                 localStorage.setItem("token", resposta.token);
             }
@@ -93,6 +98,8 @@ const LoginForm = () => {
 
                 <TextField name="email" label="E-mail" value={formData.email} onChange={handleChange} fullWidth margin="normal" required />
                 <TextField type="password" name="password" label="Senha" value={formData.password} onChange={handleChange} fullWidth margin="normal" required />
+                <FormControlLabel control={<Switch name="isCompany" onChange={handleChange} defaultValue={formData.isCompany} />} label="É uma empresa" />
+
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button type="submit" variant="contained" sx={{ width: '200px', backgroundColor: 'black', color: 'white', marginTop: '16px' }}>Entrar</Button>

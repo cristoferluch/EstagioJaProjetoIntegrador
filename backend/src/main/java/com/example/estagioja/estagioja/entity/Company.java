@@ -1,37 +1,59 @@
 package com.example.estagioja.estagioja.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.UUID;
 
-@Entity
-@Table(name = "\"company\"")
-public class Company {
+@Entity(name = "company")
+@Table(name = "company")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Company implements UserDetails {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(name = "nome")
     private String nome;
 
     @Column(name = "email", unique = true)
+    @NotNull
+    @Email
     private String email;
 
     @Column(name = "celular")
     private String celular;
 
     @Column(name = "cnpj", unique = true)
+    @NotNull
+    @Size(min = 6)
     private String cnpj;
 
     @Column(name = "senha")
+    @NotNull
+    @Size(min = 6)
     private String senha;
 
     @Column(name = "uf")
     private String uf;
+
+
+    @Column(name = "cep")
+    private String cep;
 
     @Column(name = "municipio")
     private String municipio;
@@ -53,85 +75,38 @@ public class Company {
     @Column(name = "data_inclusao")
     private Instant dataInclusao;
 
-    public Company() {
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
     }
 
-    public Company(UUID id, String nome, String email, String celular, String cnpj, String senha, String uf,
-                   String municipio, String endereco, String bairro, int numero,
-                   Instant dataAtualizacao, Instant dataInclusao) {
-        this.id = id;
-        this.nome = nome;
-        this.email = email;
-        this.celular = celular;
-        this.cnpj = cnpj;
-        this.senha = senha;
-        this.uf = uf;
-        this.municipio = municipio;
-        this.endereco = endereco;
-        this.bairro = bairro;
-        this.numero = numero;
-        this.dataAtualizacao = dataAtualizacao;
-        this.dataInclusao = dataInclusao;
+    @Override
+    public String getPassword() {
+        return senha;
     }
 
-    public UUID getId() {
-        return id;
+    @Override
+    public String getUsername() {
+        return email;
     }
-    public void setId(UUID id) {this.id = id;}
-    public String getNome() {return this.nome;}
-    public void setNome(String nome) {
-        this.nome = nome;
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
-    public String getEmail() {return this.email;}
-    public void setEmail(String email) {
-        this.email = email;
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
-    public String getCelular() {
-        return this.celular;
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
-    public void setCelular(String celular) {this.celular = celular;}
-    public String getCnpj() {
-        return this.cnpj;
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
-    }
-    public String getSenha() {return this.senha;}
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-    public String getUf() {
-        return this.uf;
-    }
-    public void setUf(String uf) {this.uf = uf;}
-    public String getMunicipio() {
-        return this.municipio;
-    }
-    public void setMunicipio(String municipio) {this.municipio = municipio;}
-    public String getEndereco() {
-        return this.endereco;
-    }
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
-    }
-    public String getBairro() {
-        return this.bairro;
-    }
-    public void setBairro(String bairro) {
-        this.bairro = bairro;
-    }
-    public int getNumero() {
-        return this.numero;
-    }
-    public void setNumero(int numero) {
-        this.numero = numero;
-    }
-    public Instant getDataAtualizacao() {
-        return this.dataAtualizacao;
-    }
-    public void setDataAtualizacao(Instant dataAtualizacao) {
-        this.dataAtualizacao = dataAtualizacao;
-    }
-    public Instant getDataInclusao() {return this.dataInclusao;}
-    public void setDataInclusao(Instant dataInclusao) {this.dataInclusao = dataInclusao;}
 }

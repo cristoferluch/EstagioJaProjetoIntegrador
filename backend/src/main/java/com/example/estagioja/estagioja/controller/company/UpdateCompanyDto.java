@@ -1,5 +1,15 @@
 package com.example.estagioja.estagioja.controller.company;
 
-public record UpdateCompanyDto(String celular, String senha, String uf, String municipio, String endereco, String bairro, String numero) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
+public record UpdateCompanyDto(
+        @NotBlank String celular,
+        @NotBlank String senha,
+        @NotBlank String cep,
+        @NotBlank String uf,
+        @NotBlank String municipio,
+        @NotBlank String endereco,
+        @NotBlank String bairro,
+        @Positive int numero){
 }

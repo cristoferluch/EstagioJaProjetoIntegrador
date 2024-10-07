@@ -55,9 +55,6 @@ public class AuthenticationController {
     @PostMapping("/login/user")
     public ResponseEntity<?> loginUser(@RequestBody @Valid AuthenticationDto data) {
         try {
-            System.out.println(data.email());
-            System.out.println(data.password());
-
             if (!userRepository.findByEmail(data.email()).isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado."));
             }
@@ -65,7 +62,7 @@ public class AuthenticationController {
             var emailPassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
             var auth = this.authenticationManager.authenticate(emailPassword);
 
-            var token = tokenService.generateToken((User) auth.getPrincipal());
+            var token = tokenService.generateTokenUser((User) auth.getPrincipal());
             return ResponseEntity.ok(new LoginResponseDto(token));
 
         } catch (BadCredentialsException ex) {
@@ -135,21 +132,50 @@ public class AuthenticationController {
     @PostMapping("/login/company")
     public ResponseEntity<?> loginCompany(@RequestBody @Valid AuthenticationDto data) {
         try {
-            System.out.println(data.email());
-            System.out.println(data.password());
-
             if (!this.companyRepository.findByEmail(data.email()).isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Empresa não encontrado."));
             }
 
             var emailPassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
             var auth = this.authenticationManager.authenticate(emailPassword);
+            var token = this.tokenService.generateTokenCompany((Company) auth.getPrincipal());
 
-            var token = tokenService.generateToken((User) auth.getPrincipal());
             return ResponseEntity.ok(new LoginResponseDto(token));
 
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Credenciais inválidas."));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Um erro inesperado ocorreu."));
+        }
+    }
+
+    @Transactional
+    @PutMapping("/update/company/{companyId}")
+    public ResponseEntity<?> updateCompanyById(@RequestHeader("Authorization") String token, @PathVariable("companyId") String companyId, @RequestBody UpdateCompanyDto updateCompanyDto) {
+        try {
+            token = token.replace("Bearer ", "");
+            String email = this.tokenService.validateToken(token);
+
+            if (email == null || email.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Token inválido ou expirado."));
+            }
+
+            Company company = this.companyService.getCompanyById(companyId).orElseThrow(() -> new CompanyException("Empresa não encontrado."));
+
+            if (!company.getEmail().equals(email)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(HttpStatus.FORBIDDEN.value(), "Email no token não corresponde a empresa."));
+            }
+
+            this.companyService.updateCompanyById(companyId, updateCompanyDto);
+
+            return ResponseEntity.ok().body(new SuccessResponse(HttpStatus.OK.value(), "Empresa atualizado com sucesso."));
+
+        } catch (CompanyException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
+
+        } catch (JwtException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Token inválido."));
+
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Um erro inesperado ocorreu."));
         }
@@ -174,39 +200,6 @@ public class AuthenticationController {
         } catch (CompanyException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Um erro inesperado ocorreu."));
-        }
-    }
-
-    @Transactional
-    @PutMapping("/update/company/{companyId}")
-    public ResponseEntity<?> updateCompanyById(@RequestHeader("Authorization") String token, @PathVariable("companyId") String companyId, @RequestBody UpdateCompanyDto updateCompanyDto) {
-
-        try {
-            token = token.replace("Bearer ", "");
-            String email = tokenService.validateToken(token);
-
-            if (email == null || email.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Token inválido ou expirado."));
-            }
-
-            Company company = this.companyService.getCompanyById(companyId).orElseThrow(() -> new CompanyException("Empresa não encontrado."));
-
-            if (!company.getEmail().equals(email)) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(HttpStatus.FORBIDDEN.value(), "Email no token não corresponde a empresa."));
-            }
-
-            this.companyService.updateCompanyById(companyId, updateCompanyDto);
-
-            return ResponseEntity.ok().body(new SuccessResponse(HttpStatus.OK.value(), "Empresa atualizado com sucesso."));
-
-        } catch (CompanyException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
-
-        } catch (JwtException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Token inválido."));
-
-        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Um erro inesperado ocorreu."));
         }
     }

@@ -146,7 +146,7 @@ const RegisterCompany = () => {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <InputMask mask="99999-999" value={formData.cep} onChange={handleChange}>
+                    <InputMask mask="99999-999" value={formData.cep} onChange={handleChange} onBlur={handleCepBlur}>
                         {(inputProps) => <TextField {...inputProps} name="cep" label="CEP" fullWidth margin="normal" required />}
                     </InputMask>
                     <FormControl fullWidth margin="normal">

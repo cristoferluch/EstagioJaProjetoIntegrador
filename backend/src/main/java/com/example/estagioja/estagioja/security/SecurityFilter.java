@@ -1,6 +1,8 @@
 package com.example.estagioja.estagioja.security;
 
+import com.example.estagioja.estagioja.entity.Company;
 import com.example.estagioja.estagioja.entity.User;
+import com.example.estagioja.estagioja.repository.CompanyRepository;
 import com.example.estagioja.estagioja.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,6 +26,9 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    CompanyRepository companyRepository;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println("Processing request: " + request.getRequestURI());
@@ -38,8 +43,15 @@ public class SecurityFilter extends OncePerRequestFilter {
                     var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else {
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Usuário não encontrado");
-                    return;
+                    Optional<Company> optionalCompany = this.companyRepository.findByEmail(email);
+                    if (optionalCompany.isPresent()) {
+                        Company company = optionalCompany.get();
+                        var authentication = new UsernamePasswordAuthenticationToken(company, null, company.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    } else {
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Usuário não encontrado");
+                        return;
+                    }
                 }
             }
         }
