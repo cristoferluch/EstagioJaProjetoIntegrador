@@ -1,47 +1,55 @@
-.input-container {
-    display: flex;       
-    flex-direction: column;  
-    align-items: center;    
-    margin: 0 auto;        
-}
-  
-.input-container .MuiTextField-root {
-    margin-bottom: 16px;
-}
-
 body{
     background: #1d1e22;
+}
 
+form h2{
+    text-align: center;
+}
+
+#div_esquerda{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#div_esquerda h1{
+
+    top: 120px;
+    left: 60px;
+    font-weight: 900;
+    font-size: 6em;
+    margin: 0;
+    line-height: 0.6em;
+    letter-spacing: -2px;
+    text-align: left;
+    margin-bottom: 40px;
 }
 
 #esquerda, #direita {
-    position: relative;
-    top: 50%;
-    font-size: 10em;
-    margin: 0; 
+    font-size: 80pt;
     color: #616161; 
     text-align: center; 
-    font-family: "TSTAR Mono Round W00 Regular", sans-serif;
-    
+    font-family: "TSTAR Mono Round W00 Regular", sans-serif; 
 }
 
 #esquerda {
-    animation: piscarEsquerda 6s; /* Aumentando a duração da animação */
+    animation: piscarEsquerda 6s;
 }
 
 #direita {
-    animation: piscarDireita 6s; /* Sincronizando com a animação da esquerda */
+    animation: piscarDireita 6s;
 }
 
 @keyframes piscarEsquerda {
-    0%, 10% { opacity: 0; } 
-    31%, 40% { opacity: 1; }  /* Totalmente visível por 40% do tempo */
-    45%, 70% { opacity: 1; } /* Mantendo a visibilidade até 70% */
-    75%, 100% { opacity: 1; } /* Desaparece após 75% */
+    0%, 10% { opacity: 0; }
+    31%, 40% { opacity: 1; }
+    45%, 70% { opacity: 1; }
+    75%, 100% { opacity: 1; }
 }
 
 @keyframes piscarDireita {
-    0%, 30% { opacity: 0; }  /* Inicialmente invisível */
-    35%, 60% { opacity: 1; } /* Aparece entre 35% e 60% */
-    65%, 100% { opacity: 1; } /* Desaparece após 65% */
+    0%, 30% { opacity: 0; }
+    35%, 60% { opacity: 1; }
+    65%, 100% { opacity: 1; }
 }

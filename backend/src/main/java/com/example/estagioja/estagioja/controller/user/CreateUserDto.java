@@ -14,6 +14,7 @@ public record CreateUserDto(
         @NotBlank String cpf,
         @NotBlank String senha,
         @NotBlank String uf,
+        @NotBlank String cep,
         @NotBlank String municipio,
         @NotBlank String endereco,
         @NotBlank String bairro,

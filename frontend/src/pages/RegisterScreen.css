@@ -1,0 +1,49 @@
+
+html{
+    background-color: white;
+}
+
+#root{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+}
+
+#container{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 80%;
+    height: 100%;
+}
+
+form{
+    width: 400px;
+    box-shadow: 0px 0px 50px 0px rgba(0,0,0,0.15);
+    padding: 20px;
+    border-radius: 15px;
+    background: white;
+}
+
+form h2{
+    text-align: center;
+}
+
+
+@media (max-width: 600px) {
+    #root{
+        flex-direction: row;
+    }
+
+    #container{
+        flex-direction: column;
+    }
+    
+}
+
+@media (max-width: 1100px) {
+    #container{
+        flex-direction: column;
+    }
+}

@@ -1,4 +1,11 @@
 
+header{
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 80px;
+}
+
 .btn-1 {
     background: darken(red, 1.5%);
     font-weight: 100;
@@ -8,45 +15,50 @@
     margin-top: 75px;
     width: 100px;
     z-index: 99999999;
-    
+
     svg {
-      height: 45px;
-      left: 0;
-      position: absolute;
-      top: 0; 
-      width: 100%; 
-      justify-content: center;
-    align-items: center;
-    
+        height: 45px;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+
     }
-    
+
     rect {
-      fill: none;
-      stroke: #fff;
-      stroke-width: 2;
-      stroke-dasharray: 422, 0;
-      transition: all 0.35s linear;
+        fill: none;
+        stroke: #fff;
+        stroke-width: 2;
+        stroke-dasharray: 422, 0;
+        transition: all 0.35s linear;
     }
-  }
-  
-  .btn-1:hover {
+}
+
+.btn-1:hover {
     background: rgba(red, 0);
     font-weight: 900;
     letter-spacing: 1px;
-    
-    rect {
-      stroke-width: 5;
-      stroke-dasharray: 15, 310;
-      stroke-dashoffset: 138;
-      transition: all 3s cubic-bezier(0.19, 1, 0.22, 1);
-    }
-  }
 
-  a{
+    rect {
+        stroke-width: 5;
+        stroke-dasharray: 15, 310;
+        stroke-dashoffset: 138;
+        transition: all 3s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+}
+
+a {
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: large;
     width: 100px;
     height: 45px;
-  }
+    font-weight: 400;
+    text-decoration: none;
+    z-index: 1;
+    color: white;
+}
+

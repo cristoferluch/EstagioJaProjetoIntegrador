@@ -30,7 +30,7 @@ public class TokenService {
         }
     }
 
-    public String validateToken(String token){
+    public String validateToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
@@ -38,8 +38,8 @@ public class TokenService {
                     .build()
                     .verify(token)
                     .getSubject();
-        } catch (JWTVerificationException exception){
-            return "";
+        } catch (JWTVerificationException exception) {
+            return null;
         }
     }
 

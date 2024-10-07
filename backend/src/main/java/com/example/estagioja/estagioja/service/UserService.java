@@ -8,6 +8,7 @@ import com.example.estagioja.estagioja.entity.User;
 import com.example.estagioja.estagioja.exception.UserException;
 import com.example.estagioja.estagioja.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
 @Service
 public class UserService {
 
+    @Autowired
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -30,6 +32,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public UUID createUser(CreateUserDto createUserDto) throws UserException {
         validateEmail(createUserDto.email());
         validateCpf(createUserDto.cpf());
@@ -71,7 +74,7 @@ public class UserService {
     }
 
     private boolean isValidCelular(String celular) {
-        String celularRegex = "/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$/";
+        String celularRegex = "^\\(?\\d{2}\\)?[\\s-]?9\\d{4}[\\s-]?\\d{4}$";
         return Pattern.matches(celularRegex, celular);
     }
 
@@ -87,6 +90,7 @@ public class UserService {
                 .cpf(createUserDto.cpf())
                 .senha(passwordEncoder.encode(createUserDto.senha()))
                 .uf(createUserDto.uf())
+                .cep(createUserDto.cep())
                 .municipio(createUserDto.municipio())
                 .endereco(createUserDto.endereco())
                 .bairro(createUserDto.bairro())
@@ -100,9 +104,7 @@ public class UserService {
 
     @Transactional
     public void updateUserById(String userId, UpdateUserDto updateUserDto) throws UserException {
-
         var id = UUID.fromString(userId);
-
         User user = userRepository.findById(id).orElseThrow(() -> new UserException("Usuário não encontrado: " + userId));
 
         if (updateUserDto.celular() != null) {
@@ -129,14 +131,22 @@ public class UserService {
             user.setBairro(updateUserDto.bairro());
         }
 
+        if (updateUserDto.cep() != null) {
+            user.setCep(updateUserDto.cep());
+        }
+
         if (updateUserDto.numero() > 0) {
             user.setNumero(updateUserDto.numero());
         }
 
         user.setDataAtualizacao(Instant.now());
-        userRepository.save(user);
-    }
 
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new UserException("Erro ao atualizar usuário: " + e.getMessage(), e);
+        }
+    }
     @Transactional
     public void deleteById(String userId) throws UserException {
         var id = UUID.fromString(userId);

@@ -7,13 +7,12 @@ body,
 canvas {
     margin: 0;
     padding: 0;
-    width: 100%;
-    height: 100%;
-
+    width: 100vw;
+    height: 100vh;
 }
 
 body {
-    background: #171717;
+
     font-family: 'Inter var', sans-serif;
 }
 
@@ -22,7 +21,7 @@ body {
     background: radial-gradient(at 50% 100%, #873740 0%, #272730 40%, #171720 80%, #070710 100%);
 }
 
-h1 {
+#titulo {
     position: absolute;
     top: 80px;
     left: 60px;

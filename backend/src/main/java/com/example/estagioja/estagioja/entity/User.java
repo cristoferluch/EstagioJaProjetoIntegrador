@@ -58,6 +58,9 @@ public class User implements UserDetails {
     @Column(name = "municipio")
     private String municipio;
 
+    @Column(name = "cep")
+    private String cep;
+
     @Column(name = "endereco")
     private String endereco;
 
