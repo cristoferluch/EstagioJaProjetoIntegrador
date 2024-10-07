@@ -64,11 +64,14 @@ const RegisterForm = () => {
                         municipio: data.localidade,
                         uf: data.uf,
                     }));
+                    return true;
                 } else {
                     alert('CEP não encontrado');
+                    return false;
                 }
             } catch (error) {
                 console.error('Erro ao buscar o CEP:', error);
+                return false;
             }
         }
     };
@@ -76,6 +79,10 @@ const RegisterForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const isCepValid = await handleCepBlur();
+        if (!isCepValid) {
+            return;
+        }
 
         const Toast = Swal.mixin({
             toast: true,
@@ -181,7 +188,7 @@ const RegisterForm = () => {
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField name="endereco" label="Endereço" value={formData.endereco} onChange={handleChange} fullWidth margin="normal" sx={{ width: '75%' }} required />
-                    <TextField name="numero" label="Número" type="number" value={formData.numero} onChange={handleChange} fullWidth margin="normal" sx={{ width: '25%' }} required />
+                    <TextField name="numero" label="Número" type="number" value={formData.numero} onChange={handleChange} fullWidth margin="normal" sx={{ width: '25%' }} inputProps={{ min: 1 }} required />
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
