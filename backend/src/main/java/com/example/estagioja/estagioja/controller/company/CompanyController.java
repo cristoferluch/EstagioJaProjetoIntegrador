@@ -18,14 +18,8 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-    @PostMapping
-    public ResponseEntity<Company> createCompany(@RequestBody CreateCompanyDto createCompanyDto){
-        var companyId = this.companyService.createCompany(createCompanyDto);
-        return ResponseEntity.created(URI.create("/companies/" + companyId.toString())).build();
-    }
-
     @GetMapping("/{companyId}")
-    public ResponseEntity<Company> getCompanyById(@PathVariable("companyId") String companyId){
+    public ResponseEntity<Company> getCompanyById(@PathVariable("companyId") String companyId) {
         var Company = this.companyService.getCompanyById(companyId);
 
         //Verifica se o usuario existe
@@ -37,19 +31,19 @@ public class CompanyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Company>> listCompanies(){
+    public ResponseEntity<List<Company>> listCompanies() {
         var companies = this.companyService.listCompanies();
         return ResponseEntity.ok(companies);
     }
 
     @PutMapping("/{companyId}")
-    public ResponseEntity<Void> updateCompanyById(@PathVariable("companyId") String companyId, @RequestBody UpdateCompanyDto updateCompanyDto){
+    public ResponseEntity<Void> updateCompanyById(@PathVariable("companyId") String companyId, @RequestBody UpdateCompanyDto updateCompanyDto) throws Exception {
         this.companyService.updateCompanyById(companyId, updateCompanyDto);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{companyId}")
-    public ResponseEntity<Void> deleteById(@PathVariable("companyId") String companyId){
+    public ResponseEntity<Void> deleteById(@PathVariable("companyId") String companyId) throws Exception {
         this.companyService.deleteById(companyId);
         return ResponseEntity.noContent().build();
     }

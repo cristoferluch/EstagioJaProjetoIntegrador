@@ -97,7 +97,7 @@ const RegisterForm = () => {
         });
 
         try {
-            const response = await fetch('http://localhost:8080/auth/register', {
+            const response = await fetch('http://localhost:8080/auth/register/user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

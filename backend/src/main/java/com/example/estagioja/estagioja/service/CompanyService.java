@@ -3,6 +3,7 @@ package com.example.estagioja.estagioja.service;
 import com.example.estagioja.estagioja.controller.company.CreateCompanyDto;
 import com.example.estagioja.estagioja.controller.company.UpdateCompanyDto;
 import com.example.estagioja.estagioja.entity.Company;
+import com.example.estagioja.estagioja.exception.CompanyException;
 import com.example.estagioja.estagioja.repository.CompanyRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class CompanyService {
         this.companyRepository = companyRepository;
     }
 
-    public UUID createCompany(CreateCompanyDto createCompanyDto) {
+    public UUID createCompany(CreateCompanyDto createCompanyDto) throws CompanyException {
         var entity = new Company(
                 UUID.randomUUID(),
                 createCompanyDto.nome(),
@@ -49,7 +50,7 @@ public class CompanyService {
         return this.companyRepository.findAll();
     }
 
-    public void updateCompanyById(String companyId, UpdateCompanyDto updateCompanyDto) {
+    public void updateCompanyById(String companyId, UpdateCompanyDto updateCompanyDto) throws CompanyException {
         var id = UUID.fromString(companyId);
 
 
@@ -98,7 +99,7 @@ public class CompanyService {
         });
     }
 
-    public void deleteById(String companyId) {
+    public void deleteById(String companyId) throws CompanyException {
         var id = UUID.fromString(companyId);
         if (this.companyRepository.existsById(id)) {
             this.companyRepository.deleteById(id);

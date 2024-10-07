@@ -21,6 +21,7 @@ const RegisterCompany = () => {
         celular: '',
         cnpj: '',
         senha: '',
+        cep: '',
         uf: '',
         municipio: '',
         endereco: '',
@@ -91,7 +92,7 @@ const RegisterCompany = () => {
         });
 
         try {
-            const response = await fetch('http://localhost:8080/auth/register', {
+            const response = await fetch('http://localhost:8080/auth/register/company', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -145,6 +146,9 @@ const RegisterCompany = () => {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
+                    <InputMask mask="99999-999" value={formData.cep} onChange={handleChange}>
+                        {(inputProps) => <TextField {...inputProps} name="cep" label="CEP" fullWidth margin="normal" required />}
+                    </InputMask>
                     <FormControl fullWidth margin="normal">
                         <InputLabel id="uf-label">UF</InputLabel>
                         <Select labelId="uf-label" id="uf-select" name="uf" label="UF" onChange={handleChange} value={formData.uf} required>
@@ -153,16 +157,15 @@ const RegisterCompany = () => {
                             ))}
                         </Select>
                     </FormControl>
+                </Box>
 
+                <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField name="municipio" label="Município" value={formData.municipio} onChange={handleChange} fullWidth margin="normal" required />
-                </Box>
-
-                <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField name="bairro" label="Bairro" value={formData.bairro} onChange={handleChange} fullWidth margin="normal" required />
-                    <TextField name="endereco" label="Endereço" value={formData.endereco} onChange={handleChange} fullWidth margin="normal" required />
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
+                    <TextField name="endereco" label="Endereço" value={formData.endereco} onChange={handleChange} fullWidth margin="normal" required />
                     <TextField name="numero" label="Número" type="number" value={formData.numero} onChange={handleChange} fullWidth margin="normal" inputProps={{ min: 1 }} required />
                 </Box>
 

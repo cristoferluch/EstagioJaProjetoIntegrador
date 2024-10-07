@@ -89,9 +89,7 @@ public class Company {
     public String getCelular() {
         return this.celular;
     }
-    public void setCelular(String celular) {
-        this.celular = celular;
-    }
+    public void setCelular(String celular) {this.celular = celular;}
     public String getCnpj() {
         return this.cnpj;
     }
