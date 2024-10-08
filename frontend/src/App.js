@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import LoginScreen from './pages/LoginScreen';
 import RegisterScreen from './pages/RegisterScreen';
-import UserType from './pages/UserType';
 import RegisterCompany from './pages/RegisterCompany';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -23,8 +22,8 @@ function App() {
         />
         <Route path="/login" element={<LoginScreen />} /> 
         <Route path="/cadastro" element={<RegisterScreen />} />
-        <Route path="/CadastroEmpresa" element={<RegisterCompany />} />
-        <Route path="/TipoUsuario" element={<UserType />} />
+        <Route path="/cadastroEmpresa" element={<RegisterCompany />} />
+
 
       </Routes>
       <Footer />

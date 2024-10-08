@@ -6,28 +6,35 @@ import Button from '@mui/material/Button';
 import './LoginScreen.css';
 import image from '../assets/login.gif';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {FormControlLabel} from "@mui/material";
 
 const LoginForm = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [formData, setFormData] = useState({
-        email: '',
+        email: location.state?.email || '',
         password: '',
-        isCompany: 'off'
-    })
+        isCompany: false,
+    });
 
     const handleRegisterClick = () => {
-        navigate('/cadastro');
+        
+        if (!formData.isCompany) {
+            navigate('/cadastro');
+        } else {
+            navigate('/cadastroEmpresa');
+        }
+
     };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value, checked, type } = e.target;
         setFormData({
             ...formData,
-            [name]: value,
+            [name]: type === 'checkbox' ? checked : value,
         });
     };
 
@@ -47,7 +54,7 @@ const LoginForm = () => {
         });
 
         try {
-            let urlRequest = formData.isCompany === 'off' ? 'http://localhost:8080/auth/login/user' : 'http://localhost:8080/auth/login/company';
+            let urlRequest = formData.isCompany === false ? 'http://localhost:8080/auth/login/user' : 'http://localhost:8080/auth/login/company';
 
             const response = await fetch(urlRequest, {
                 method: 'POST',
@@ -68,7 +75,7 @@ const LoginForm = () => {
             } else {
                 Toast.fire({
                     icon: "success",
-                    title: formData.isCompany === 'off' ? "Usuário logado com sucesso!" : "Empresa logado com sucesso!",
+                    title: formData.isCompany === false ? "Usuário logado com sucesso!" : "Empresa logado com sucesso!",
                 });
                 localStorage.setItem("token", resposta.token);
             }
@@ -98,9 +105,8 @@ const LoginForm = () => {
 
                 <TextField name="email" label="E-mail" value={formData.email} onChange={handleChange} fullWidth margin="normal" required />
                 <TextField type="password" name="password" label="Senha" value={formData.password} onChange={handleChange} fullWidth margin="normal" required />
-                <FormControlLabel control={<Switch name="isCompany" onChange={handleChange} defaultValue={formData.isCompany} />} label="É uma empresa" />
-
-
+                <FormControlLabel control={<Switch name="isCompany" checked={formData.isCompany} onChange={(e) => setFormData({ ...formData, isCompany: e.target.checked })} />} label="É uma empresa"/>
+                
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button type="submit" variant="contained" sx={{ width: '200px', backgroundColor: 'black', color: 'white', marginTop: '16px' }}>Entrar</Button>
                     <Button variant="outlined" sx={{ width: '200px', borderColor: 'black', color: 'black', marginTop: '16px' }} onClick={handleRegisterClick}>Cadastrar</Button>

@@ -38,7 +38,7 @@ const RegisterCompany = () => {
     };
 
     const handleRegisterClick = () => {
-        navigate('/TipoUsuario');
+        navigate('/login');
     };
 
     const handleCepBlur = async () => {
@@ -88,6 +88,9 @@ const RegisterCompany = () => {
             didOpen: (toast) => {
                 toast.onmouseenter = Swal.stopTimer;
                 toast.onmouseleave = Swal.resumeTimer;
+            },
+            willClose: () => {
+                navigate('/login', { state: { email: formData.email } });
             }
         });
 

@@ -30,7 +30,6 @@ form h2{
     text-align: center;
 }
 
-
 @media (max-width: 600px) {
     #root{
         flex-direction: row;
@@ -39,7 +38,6 @@ form h2{
     #container{
         flex-direction: column;
     }
-    
 }
 
 @media (max-width: 1100px) {

@@ -42,7 +42,7 @@ const RegisterForm = () => {
     };
     
     const handleRegisterClick = () => {
-        navigate('/TipoUsuario');
+        navigate('/login');
     };
 
     const handleCepBlur = async () => {
@@ -93,6 +93,9 @@ const RegisterForm = () => {
             didOpen: (toast) => {
                 toast.onmouseenter = Swal.stopTimer;
                 toast.onmouseleave = Swal.resumeTimer;
+            },
+            willClose: () => {
+                navigate('/login', { state: { email: formData.email } });
             }
         });
 
