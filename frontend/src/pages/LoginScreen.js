@@ -50,6 +50,9 @@ const LoginForm = () => {
             didOpen: (toast) => {
                 toast.onmouseenter = Swal.stopTimer;
                 toast.onmouseleave = Swal.resumeTimer;
+            },
+            willClose: () => {
+                navigate('/user');
             }
         });
 
@@ -65,7 +68,7 @@ const LoginForm = () => {
             });
 
             const resposta = await response.json();
-
+            console.log(resposta)
             if (!response.ok) {
                 Swal.fire({
                     icon: 'error',
@@ -77,7 +80,10 @@ const LoginForm = () => {
                     icon: "success",
                     title: formData.isCompany === false ? "Usuário logado com sucesso!" : "Empresa logado com sucesso!",
                 });
+                
                 localStorage.setItem("token", resposta.token);
+                localStorage.setItem("id", resposta.id);
+                navigate('/user');
             }
 
         } catch (error) {

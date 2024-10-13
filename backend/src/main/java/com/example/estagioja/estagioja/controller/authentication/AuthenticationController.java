@@ -5,6 +5,7 @@ import com.example.estagioja.estagioja.controller.company.UpdateCompanyDto;
 import com.example.estagioja.estagioja.controller.user.CreateUserDto;
 import com.example.estagioja.estagioja.controller.user.LoginResponseDto;
 import com.example.estagioja.estagioja.controller.user.UpdateUserDto;
+import com.example.estagioja.estagioja.controller.user.UserResponseDto;
 import com.example.estagioja.estagioja.entity.Company;
 import com.example.estagioja.estagioja.entity.User;
 import com.example.estagioja.estagioja.exception.CompanyException;
@@ -17,6 +18,7 @@ import com.example.estagioja.estagioja.security.TokenService;
 import com.example.estagioja.estagioja.service.CompanyService;
 import com.example.estagioja.estagioja.service.UserService;
 import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -55,7 +59,8 @@ public class AuthenticationController {
     @PostMapping("/login/user")
     public ResponseEntity<?> loginUser(@RequestBody @Valid AuthenticationDto data) {
         try {
-            if (!userRepository.findByEmail(data.email()).isPresent()) {
+            var userOptional = userRepository.findByEmail(data.email());
+            if (!userOptional.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Usuário não encontrado."));
             }
 
@@ -63,13 +68,45 @@ public class AuthenticationController {
             var auth = this.authenticationManager.authenticate(emailPassword);
 
             var token = tokenService.generateTokenUser((User) auth.getPrincipal());
-            return ResponseEntity.ok(new LoginResponseDto(token));
+            var user = userOptional.get();
+            return ResponseEntity.ok(new LoginResponseDto(token, user.getId()));
 
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Credenciais inválidas."));
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Um erro inesperado ocorreu."));
         }
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable("userId") String userId, HttpServletRequest request) throws UserException {
+
+        String claims = tokenService.validateToken(request.getHeader("Authorization").substring(7));
+        if (claims == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Token inválido ou expirado."));
+        }
+
+        var user = userService.getUserById(userId);
+
+        return user.map(u -> {
+            UserResponseDto userResponseDto = new UserResponseDto(
+                    u.getNome(),
+                    u.getSobrenome(),
+                    u.getEmail(),
+                    u.getCelular(),
+                    u.getCpf(),
+                    u.getUf(),
+                    u.getCep(),
+                    u.getMunicipio(),
+                    u.getEndereco(),
+                    u.getBairro(),
+                    u.getNumero(),
+                    u.getGenero(),
+                    u.getDataNascimento()
+            );
+            return ResponseEntity.ok(userResponseDto);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Transactional
@@ -132,15 +169,16 @@ public class AuthenticationController {
     @PostMapping("/login/company")
     public ResponseEntity<?> loginCompany(@RequestBody @Valid AuthenticationDto data) {
         try {
-            if (!this.companyRepository.findByEmail(data.email()).isPresent()) {
+            var companyOptional = userRepository.findByEmail(data.email());
+            if (!companyOptional.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Empresa não encontrado."));
             }
 
             var emailPassword = new UsernamePasswordAuthenticationToken(data.email(), data.password());
             var auth = this.authenticationManager.authenticate(emailPassword);
             var token = this.tokenService.generateTokenCompany((Company) auth.getPrincipal());
-
-            return ResponseEntity.ok(new LoginResponseDto(token));
+            var company = companyOptional.get();
+            return ResponseEntity.ok(new LoginResponseDto(token, company.getId()));
 
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Credenciais inválidas."));

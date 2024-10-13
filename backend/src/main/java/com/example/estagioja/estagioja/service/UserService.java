@@ -8,7 +8,6 @@ import com.example.estagioja.estagioja.entity.User;
 import com.example.estagioja.estagioja.exception.UserException;
 import com.example.estagioja.estagioja.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +98,7 @@ public class UserService {
                 .dataNascimento(createUserDto.dataNascimento())
                 .dataAtualizacao(now)
                 .dataInclusao(now)
+
                 .build();
     }
 
@@ -111,7 +111,7 @@ public class UserService {
             user.setCelular(updateUserDto.celular());
         }
 
-        if (updateUserDto.senha() != null) {
+        if (updateUserDto.senha() != null && !updateUserDto.senha().isBlank()) {
             user.setSenha(passwordEncoder.encode(updateUserDto.senha()));
         }
 

@@ -83,6 +83,8 @@ public class User implements UserDetails {
     @CreationTimestamp
     @Column(name = "data_inclusao")
     private Instant dataInclusao;
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

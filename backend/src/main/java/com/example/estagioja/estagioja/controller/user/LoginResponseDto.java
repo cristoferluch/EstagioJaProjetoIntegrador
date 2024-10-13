@@ -1,4 +1,6 @@
 package com.example.estagioja.estagioja.controller.user;
 
-public record LoginResponseDto(String token) {
+import java.util.UUID;
+
+public record LoginResponseDto(String token, UUID id) {
 }
