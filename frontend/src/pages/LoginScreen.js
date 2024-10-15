@@ -52,7 +52,11 @@ const LoginForm = () => {
                 toast.onmouseleave = Swal.resumeTimer;
             },
             willClose: () => {
-                navigate('/user');
+                if(formData.isCompany === true){
+                navigate('/company');
+                } else {
+                navigate('/user'); 
+                }
             }
         });
 
@@ -83,7 +87,6 @@ const LoginForm = () => {
                 
                 localStorage.setItem("token", resposta.token);
                 localStorage.setItem("id", resposta.id);
-                navigate('/user');
             }
 
         } catch (error) {

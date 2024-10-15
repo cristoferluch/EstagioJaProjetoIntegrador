@@ -169,7 +169,7 @@ public class AuthenticationController {
     @PostMapping("/login/company")
     public ResponseEntity<?> loginCompany(@RequestBody @Valid AuthenticationDto data) {
         try {
-            var companyOptional = userRepository.findByEmail(data.email());
+            var companyOptional = companyRepository.findByEmail(data.email());
             if (!companyOptional.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Empresa não encontrado."));
             }
@@ -183,6 +183,7 @@ public class AuthenticationController {
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Credenciais inválidas."));
         } catch (Exception ex) {
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Um erro inesperado ocorreu."));
         }
     }
