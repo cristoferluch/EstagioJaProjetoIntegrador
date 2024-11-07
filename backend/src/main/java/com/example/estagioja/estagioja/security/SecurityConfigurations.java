@@ -32,6 +32,11 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/auth/register/*").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/auth/update/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/auth/user/*").authenticated()
+                        // @todo filtrar somente para empresa logada
+                        // .requestMatchers(HttpMethod.POST, "/jobs*").authenticated()
+                        // .requestMatchers(HttpMethod.PUT, "/jobs*").authenticated()
+                        // .requestMatchers(HttpMethod.DELETE, "/jobs*").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .cors(cors -> cors.configurationSource(request -> {

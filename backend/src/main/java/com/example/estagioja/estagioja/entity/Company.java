@@ -11,7 +11,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "company")
@@ -74,6 +76,9 @@ public class Company implements UserDetails {
     @CreationTimestamp
     @Column(name = "data_inclusao")
     private Instant dataInclusao;
+
+    @OneToMany(mappedBy = "job")
+    private List<Job> jobs = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
