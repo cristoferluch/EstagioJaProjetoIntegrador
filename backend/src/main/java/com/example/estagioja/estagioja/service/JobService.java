@@ -46,15 +46,23 @@ public class JobService {
         return Optional.ofNullable(this.companyRepository.findById(UUID.fromString(companyId)).orElseThrow(() -> new JobException("Empresa não encontrado: " + companyId)));
     }
 
-    private Company buildJobEntity(CreateJobDto createJobDto) throws JobException {
+    private Job buildJobEntity(CreateJobDto createJobDto) throws JobException {
         Instant now = Instant.now();
+
+        var companies = this.companyRepository.findAll();
+        Company company = null;
+        for (Company companyFor : companies) {
+            company = companyFor;
+            break;
+        }
+
 
         return Job.builder()
                 .id(UUID.randomUUID())
                 .titulo(createJobDto.titulo())
                 .descricao(createJobDto.descricao())
                 .salario(createJobDto.salario())
-                // .company(this.getCompanyById(SecurityContextHolder.getContext().getAuthentication().getEntity())) @todo pegar emmpresa para vincular
+                .company(company)
                 .dataAtualizacao(now)
                 .dataInclusao(now)
                 .build();

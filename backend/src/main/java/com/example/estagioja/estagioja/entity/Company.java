@@ -77,7 +77,7 @@ public class Company implements UserDetails {
     @Column(name = "data_inclusao")
     private Instant dataInclusao;
 
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "company")
     private List<Job> jobs = new ArrayList<>();
 
     @Override

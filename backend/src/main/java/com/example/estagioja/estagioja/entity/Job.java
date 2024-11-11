@@ -1,5 +1,6 @@
 package com.example.estagioja.estagioja.entity;
 
+import java.io.Serializable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -16,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Job {
+public class Job implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,7 +46,7 @@ public class Job {
     @Column(name = "data_inclusao")
     private Instant dataInclusao;
 
-    @ManyToMany
+    @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
 }
