@@ -97,6 +97,11 @@ public class JobService {
                 updated = true;
             }
 
+            if (updateJobDto.descricao() != null) {
+                job.setDescricao(updateJobDto.descricao());
+                updated = true;
+            }
+
             if (updateJobDto.salario() > 0) {
                 job.setSalario(updateJobDto.salario());
                 updated = true;
