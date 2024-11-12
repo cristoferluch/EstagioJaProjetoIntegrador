@@ -56,12 +56,12 @@ public class JobService {
             break;
         }
 
-
         return Job.builder()
                 .id(UUID.randomUUID())
                 .titulo(createJobDto.titulo())
                 .descricao(createJobDto.descricao())
                 .salario(createJobDto.salario())
+                .categoria(createJobDto.categoria())
                 .company(company)
                 .dataAtualizacao(now)
                 .dataInclusao(now)
