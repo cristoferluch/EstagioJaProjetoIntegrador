@@ -1,6 +1,8 @@
 package com.example.estagioja.estagioja.entity;
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -14,6 +16,7 @@ import java.util.UUID;
 @Table(name = "job")
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -46,7 +49,7 @@ public class Job implements Serializable {
     @Column(name = "data_inclusao")
     private Instant dataInclusao;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
 }

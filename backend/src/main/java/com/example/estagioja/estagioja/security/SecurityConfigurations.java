@@ -28,14 +28,16 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST, "/jobs").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/jobs/*").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/jobs/*").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/jobs/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/jobs").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/jobs/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register/*").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/auth/update/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/auth/user/*").authenticated()
-                        // @todo filtrar somente para empresa logada
-                        // .requestMatchers(HttpMethod.POST, "/jobs*").authenticated()
-                        // .requestMatchers(HttpMethod.PUT, "/jobs*").authenticated()
-                        // .requestMatchers(HttpMethod.DELETE, "/jobs*").authenticated()
 
                         .anyRequest().authenticated()
                 )

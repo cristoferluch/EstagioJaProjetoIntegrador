@@ -12,7 +12,6 @@ import Footer from './components/Footer';
 import FormCompany from './pages/FormCompany';
 import Vagas from './pages/Vagas';
 import CreateVaga from './pages/CreateVaga';
-import CreateVagaPage from './components/CreateVagaPage'; 
 
 
 function App() {
@@ -27,8 +26,7 @@ function App() {
                 <Route path="/company" element={<PrivateRoute><Company /></PrivateRoute>} />
                 <Route path="/" element={<FormCompany />} />
                 <Route path="/vagas" element={<Vagas />} />
-                <Route path="/createvaga" element={<CreateVaga />} />
-                <Route path="/criar-vaga" element={<CreateVagaPage />} />
+                <Route path="/criar-vaga" element={<CreateVaga />} />
             </Routes>
             <Footer />
         </Router>

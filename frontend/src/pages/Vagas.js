@@ -36,7 +36,7 @@ const Vagas = () => {
                     className="button-criar-vaga"
                     variant="contained"
                     color="primary"
-                    onClick={() => navigate('/createvaga')}
+                    onClick={() => navigate('/criar-vaga')}
                 >
                     Criar Vaga
                 </Button>

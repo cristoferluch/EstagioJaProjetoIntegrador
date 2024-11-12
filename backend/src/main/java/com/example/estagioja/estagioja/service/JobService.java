@@ -32,10 +32,10 @@ public class JobService {
     }
 
     @Transactional
-    public UUID createJob(CreateJobDto createJobDto) throws JobException {
+    public Job createJob(CreateJobDto createJobDto) throws JobException {
         Job entity = buildJobEntity(createJobDto);
         Job jobSaved = this.jobRepository.save(entity);
-        return jobSaved.getId();
+        return jobSaved;
     }
 
     public Optional<Job> getJobById(String jobId) throws JobException {
