@@ -1,0 +1,20 @@
+.button-ver-vagas {
+    background-color: #adafb1;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button-ver-vagas:hover {
+    background-color: #31353a;
+    transform: translateY(-2px);
+}
+
+.button-ver-vagas:active {
+    background-color: #104a7d;
+    transform: translateY(0);
+}

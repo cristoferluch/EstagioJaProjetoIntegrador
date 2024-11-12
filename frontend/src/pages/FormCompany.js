@@ -1,8 +1,11 @@
 import React from 'react';
-import { Box, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
 import InputMask from 'react-input-mask';
+import './FormCompany.css';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) => {
+    const navigate = useNavigate();
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -13,6 +16,17 @@ const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) 
 
     return (
         <>
+            <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+            <Button
+                className="button-ver-vagas"
+                variant="contained"
+                color="primary"
+                onClick={() => navigate('/vagas')}
+            >
+                Ver vagas
+            </Button>
+        </Box>
+
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <TextField
                     name="nome"

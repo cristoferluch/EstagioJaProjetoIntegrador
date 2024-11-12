@@ -1,0 +1,15 @@
+
+.button-criar-vaga {
+    background-color: #808080;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+.button-criar-vaga:hover {
+    background-color: #696969;
+}

@@ -9,6 +9,10 @@ import Company from './pages/Company';
 import PrivateRoute from './pages/PrivateRoute';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import FormCompany from './pages/FormCompany';
+import Vagas from './pages/Vagas';
+import CreateVaga from './pages/CreateVaga';
+import CreateVagaPage from './components/CreateVagaPage'; 
 
 
 function App() {
@@ -21,6 +25,10 @@ function App() {
                 <Route path="/cadastroEmpresa" element={<RegisterCompany />} />
                 <Route path="/user" element={<PrivateRoute><User /></PrivateRoute>} />
                 <Route path="/company" element={<PrivateRoute><Company /></PrivateRoute>} />
+                <Route path="/" element={<FormCompany />} />
+                <Route path="/vagas" element={<Vagas />} />
+                <Route path="/createvaga" element={<CreateVaga />} />
+                <Route path="/criar-vaga" element={<CreateVagaPage />} />
             </Routes>
             <Footer />
         </Router>
