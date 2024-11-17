@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Box, Button, Typography, Grid, Card, CardContent } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import "./Vagas.css";
@@ -6,14 +6,14 @@ import "./Vagas.css";
 const Vagas = () => {
     const navigate = useNavigate();
 
-    const vagas = [
-        { id: 1, titulo: 'Desenvolvedor Front-End', descricao: 'Desenvolvimento de interfaces.' },
-        { id: 2, titulo: 'Desenvolvedor Back-End', descricao: 'Desenvolvimento de APIs.' },
-        { id: 3, titulo: 'Analista de Dados', descricao: 'Análise de dados e relatórios.' },
-        { id: 4, titulo: 'Designer UI/UX', descricao: 'Design de interfaces e experiência do usuário.' },
-        { id: 5, titulo: 'Gerente de Projetos', descricao: 'Gerenciamento de projetos e equipe.' },
-        { id: 6, titulo: 'Especialista em Marketing', descricao: 'Criação de campanhas e estratégias de marketing.' }
-    ];
+    const [vagas, setVagas] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:8080/jobs')
+            .then(response => response.json())
+            .then(vagas => setVagas(vagas))
+            .catch(error => console.error('Erro ao buscar dados:', error));
+    }, []);
 
     return (
         <Box>
