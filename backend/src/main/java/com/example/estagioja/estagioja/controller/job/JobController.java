@@ -1,5 +1,6 @@
 package com.example.estagioja.estagioja.controller.job;
 
+import com.example.estagioja.estagioja.controller.category.CreateCategoryDto;
 import com.example.estagioja.estagioja.entity.Job;
 import com.example.estagioja.estagioja.exception.ErrorResponse;
 import com.example.estagioja.estagioja.service.JobService;
@@ -42,8 +43,8 @@ public class JobController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Job>> listJobs() {
-        var jobs = this.jobService.listJobs();
+    public ResponseEntity<List<Job>> listJobs(@RequestParam FilterJobDto filterJobDto) {
+        var jobs = this.jobService.listJobs(filterJobDto);
         return ResponseEntity.ok(jobs);
     }
 

@@ -20,21 +20,25 @@ const CreateVaga = () => {
         titulo: '',
         descricao: '',
         salario: '',
-        categoria: ''
+        categoria: '',
+        jobId: '',
+        companyId: localStorage.getItem("id")
     });
 
     const disabledFields = {
         titulo: false,
         descricao: false,
         salario: false,
-        categoria: false
+        categoria: false,
+        jobId: false
     };
 
     const requiredFields = {
         titulo: true,
         descricao: true,
         salario: true,
-        categoria: false
+        categoria: false,
+        jobId: false
     };
 
     const handleSubmit = async (e) => {
@@ -56,6 +60,8 @@ const CreateVaga = () => {
         });
 
         try {
+
+            formData.jobId = '';
             const response = await fetch('http://localhost:8080/jobs', {
                 method: 'POST',
                 headers: {
@@ -83,8 +89,6 @@ const CreateVaga = () => {
             console.error('Erro:', error);
         }
     };
-
-
 
     const handleClick = () => {
         navigate('/vagas');

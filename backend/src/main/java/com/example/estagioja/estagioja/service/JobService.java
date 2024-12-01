@@ -1,14 +1,19 @@
 package com.example.estagioja.estagioja.service;
 
+import com.example.estagioja.estagioja.controller.category.CreateCategoryDto;
+import com.example.estagioja.estagioja.controller.job.FilterJobDto;
 import com.example.estagioja.estagioja.controller.job.UpdateJobDto;
 import com.example.estagioja.estagioja.controller.job.CreateJobDto;
+import com.example.estagioja.estagioja.entity.Category;
 import com.example.estagioja.estagioja.entity.Company;
 import com.example.estagioja.estagioja.entity.Job;
+import com.example.estagioja.estagioja.exception.CategoryException;
 import com.example.estagioja.estagioja.exception.JobException;
 import com.example.estagioja.estagioja.repository.CompanyRepository;
 import com.example.estagioja.estagioja.repository.JobRepository;
+import com.example.estagioja.estagioja.specification.JobSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,18 +22,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 @Service
 public class JobService {
 
     private final CompanyRepository companyRepository;
 
     private final JobRepository jobRepository;
+    private final CategoryService categoryService;
 
     @Autowired
-    public JobService(JobRepository jobRepository, CompanyRepository companyRepository) {
+    public JobService(JobRepository jobRepository, CompanyRepository companyRepository, CategoryService categoryService) {
         this.companyRepository = companyRepository;
         this.jobRepository = jobRepository;
+        this.categoryService = categoryService;
     }
 
     @Transactional
@@ -48,12 +54,18 @@ public class JobService {
 
     private Job buildJobEntity(CreateJobDto createJobDto) throws JobException {
         Instant now = Instant.now();
+        Company company = this.getCompanyById(createJobDto.companyId()).orElse(null);
+        Category category = null;
 
-        var companies = this.companyRepository.findAll();
-        Company company = null;
-        for (Company companyFor : companies) {
-            company = companyFor;
-            break;
+        try {
+            category = this.categoryService.getCategoryById(createJobDto.category()).orElse(null);
+        } catch (CategoryException $e) {
+            CreateCategoryDto createCategoryDto = new CreateCategoryDto(createJobDto.category());
+            try {
+                category = this.categoryService.createCategory(createCategoryDto);
+            } catch (CategoryException $ex) {
+                throw new JobException("Erro ao criar a categoria");
+            }
         }
 
         return Job.builder()
@@ -61,25 +73,35 @@ public class JobService {
                 .titulo(createJobDto.titulo())
                 .descricao(createJobDto.descricao())
                 .salario(createJobDto.salario())
-                .categoria(createJobDto.categoria())
+                .category(category)
                 .company(company)
                 .dataAtualizacao(now)
                 .dataInclusao(now)
                 .build();
     }
 
-    public List<Job> listJobs() {
-        return this.jobRepository.findAll();
+    public List<Job> listJobs(FilterJobDto filterJobDto) {
+        Optional<Category> category = Optional.empty();
+        if (filterJobDto.category() != null) {
+            try {
+                category = this.categoryService.getCategoryById(filterJobDto.category());
+            } catch (CategoryException categoryException) {
+                category = Optional.empty();
+            }
+        }
+
+        Specification<Job> spec = Specification.where(JobSpecification.hasTitulo(filterJobDto.titulo()))
+                .and(JobSpecification.hasCategory(category.orElse(null)))
+                .and(JobSpecification.hasMinSalario(filterJobDto.minSalario()))
+                .and(JobSpecification.hasMaxSalario(filterJobDto.maxSalario()));
+
+        return this.jobRepository.findAll(spec);
     }
 
     public void updateJobById(String jobId, UpdateJobDto updateJobDto) throws JobException {
         var id = UUID.fromString(jobId);
 
         this.jobRepository.findById(id).ifPresent(job -> {
-            // if (SecurityContextHolder.getContext().getAuthentication().getEntity().getId() != job.company.getId()) {  @todo pegar emmpresa para vincular
-            //      throw new JobException("Empresa não bate corretamente com a empresa da vaga ");
-            // }
-
             boolean updated = false;
 
             if(updateJobDto.titulo() != null){
@@ -92,9 +114,24 @@ public class JobService {
                 updated = true;
             }
 
-            if (updateJobDto.categoria() != null) {
-                job.setCategoria(updateJobDto.categoria());
-                updated = true;
+            if (updateJobDto.category() != null) {
+                Category category = null;
+
+                try {
+                    category = this.categoryService.getCategoryById(updateJobDto.category()).orElse(null);
+                } catch (CategoryException $e) {
+                    CreateCategoryDto createCategoryDto = new CreateCategoryDto(updateJobDto.category());
+                    try {
+                        category = this.categoryService.createCategory(createCategoryDto);
+                    } catch (CategoryException $ex) {
+
+                    }
+                }
+
+                if (category != null) {
+                    job.setCategory(category);
+                    updated = true;
+                }
             }
 
             if (updateJobDto.descricao() != null) {

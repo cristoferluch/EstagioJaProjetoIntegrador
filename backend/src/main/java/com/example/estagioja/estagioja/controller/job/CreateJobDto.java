@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Positive;
 public record CreateJobDto(
         @NotBlank String titulo,
         @NotBlank String descricao,
-        @NotBlank String categoria,
-        @Positive int salario) {
+        @NotBlank String category,
+        @Positive int salario,
+        @NotBlank String companyId) {
 }
