@@ -90,8 +90,18 @@ public class JobService {
             }
         }
 
+        Optional<Company> company = Optional.empty();
+        if (filterJobDto.companyId() != null) {
+            try {
+                company = this.getCompanyById(filterJobDto.companyId());
+            } catch (JobException jobException) {
+                company = Optional.empty();
+            }
+        }
+
         Specification<Job> spec = Specification.where(JobSpecification.hasTitulo(filterJobDto.titulo()))
                 .and(JobSpecification.hasCategory(category.orElse(null)))
+                .and(JobSpecification.hasCompany(company.orElse(null)))
                 .and(JobSpecification.hasMinSalario(filterJobDto.minSalario()))
                 .and(JobSpecification.hasMaxSalario(filterJobDto.maxSalario()));
 

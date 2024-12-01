@@ -1,6 +1,7 @@
 package com.example.estagioja.estagioja.specification;
 
 import com.example.estagioja.estagioja.entity.Category;
+import com.example.estagioja.estagioja.entity.Company;
 import com.example.estagioja.estagioja.entity.Job;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -14,6 +15,11 @@ public class JobSpecification {
     public static Specification<Job> hasCategory(Category category) {
         return (root, query, criteriaBuilder) ->
                 category != null ? criteriaBuilder.equal(root.get("category"), category) : null;
+    }
+
+    public static Specification<Job> hasCompany(Company company) {
+        return (root, query, criteriaBuilder) ->
+                company != null ? criteriaBuilder.equal(root.get("company"), company) : null;
     }
 
     public static Specification<Job> hasMinSalario(int minSalario) {
