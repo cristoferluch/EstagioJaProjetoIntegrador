@@ -1,44 +1,39 @@
-
-import React, {useState} from 'react';
-import { Box, TextField, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, TextField, Button, MenuItem } from '@mui/material';
 import './CreateVaga.css';
 import { useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
 
 const CreateVaga = () => {
+    const [formData, setFormData] = useState({
+        titulo: '',
+        descricao: '',
+        salario: '',
+        category: '',
+        jobId: '',
+        companyId: localStorage.getItem("id"),
+        customCategoria: ''  // Novo campo para categoria personalizada
+    });
+
+    const [categorias, setCategorias] = useState([]); // Estado para armazenar categorias do banco
+    const [showCustomCategoria, setShowCustomCategoria] = useState(false); // Controla se o campo customCategoria será mostrado
+
+    const navigate = useNavigate();
+
+    // Carregar as categorias ao montar o componente
+    useEffect(() => {
+        fetch('http://localhost:8080/categorias')
+            .then((response) => response.json())
+            .then((data) => setCategorias(data))
+            .catch((error) => console.error('Erro ao carregar categorias:', error));
+    }, []);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
             ...formData,
             [name]: value,
         });
-    };
-
-    const navigate = useNavigate();
-
-    const [formData, setFormData] = useState({
-        titulo: '',
-        descricao: '',
-        salario: '',
-        categoria: '',
-        jobId: '',
-        companyId: localStorage.getItem("id")
-    });
-
-    const disabledFields = {
-        titulo: false,
-        descricao: false,
-        salario: false,
-        categoria: false,
-        jobId: false
-    };
-
-    const requiredFields = {
-        titulo: true,
-        descricao: true,
-        salario: true,
-        categoria: false,
-        jobId: false
     };
 
     const handleSubmit = async (e) => {
@@ -60,8 +55,12 @@ const CreateVaga = () => {
         });
 
         try {
-
             formData.jobId = '';
+            if (formData.customCategoria) {
+                
+                formData.category = formData.customCategoria;  // Usa a nova categoria
+            }
+
             const response = await fetch('http://localhost:8080/jobs', {
                 method: 'POST',
                 headers: {
@@ -117,10 +116,9 @@ const CreateVaga = () => {
                         label="Título"
                         value={safeFormData.titulo || ''}
                         onChange={handleChange}
-                        disabled={disabledFields.titulo}
                         fullWidth
                         margin="normal"
-                        required={requiredFields.titulo}
+                        required
                     />
                 </Box>
 
@@ -130,12 +128,11 @@ const CreateVaga = () => {
                         label="Descrição"
                         value={safeFormData.descricao || ''}
                         onChange={handleChange}
-                        disabled={disabledFields.descricao}
                         fullWidth
                         multiline
                         rows={10}
                         margin="normal"
-                        required={requiredFields.descricao}
+                        required
                     />
                 </Box>
 
@@ -146,21 +143,40 @@ const CreateVaga = () => {
                         type="number"
                         value={safeFormData.salario || ''}
                         onChange={handleChange}
-                        disabled={disabledFields.salario}
                         fullWidth
                         margin="normal"
-                        required={requiredFields.salario}
+                        required
                     />
                     <TextField
-                        name="categoria"
+                        name="category"
                         label="Categoria"
-                        value={safeFormData.categoria || ''}
+                        value={safeFormData.category || ''}
                         onChange={handleChange}
-                        disabled={disabledFields.categoria}
                         fullWidth
                         margin="normal"
-                        required={requiredFields.categoria}
-                    />
+                        select
+                        required
+                    >
+                        {categorias.map((categoria) => (
+                            <MenuItem key={categoria.id} value={categoria.nome}>
+                                {categoria.nome}
+                            </MenuItem>
+                        ))}
+                        <MenuItem value="Outra" onClick={() => setShowCustomCategoria(true)}>
+                            Outra (digite a categoria)
+                        </MenuItem>
+                    </TextField>
+
+                    {showCustomCategoria && (
+                        <TextField
+                            name="customCategoria"
+                            label="Nova Categoria"
+                            value={safeFormData.customCategoria || ''}
+                            onChange={handleChange}
+                            fullWidth
+                            margin="normal"
+                        />
+                    )}
                 </Box>
 
                 <Box sx={{display: 'flex', gap: 1}}>
