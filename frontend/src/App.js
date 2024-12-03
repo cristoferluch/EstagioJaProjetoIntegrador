@@ -12,6 +12,7 @@ import Footer from './components/Footer';
 import FormCompany from './pages/FormCompany';
 import Vagas from './pages/Vagas';
 import CreateVaga from './pages/CreateVaga';
+import EditVaga from "./pages/EditVaga";
 
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/" element={<FormCompany />} />
                 <Route path="/vagas" element={<Vagas />} />
                 <Route path="/criar-vaga" element={<CreateVaga />} />
+                <Route path="/editar-vaga" element={<EditVaga />} />
             </Routes>
             <Footer />
         </Router>

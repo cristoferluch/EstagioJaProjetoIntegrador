@@ -110,7 +110,7 @@ const Vagas = () => {
                                         </Box>
                                         <Typography variant="body2" color="textSecondary">{vaga.descricao}</Typography>
                                         <Typography variant="body2" color="textSecondary">Salário: R${vaga.salario}</Typography>
-                                        <Typography variant="body2" color="textSecondary">Categoria: {vaga.categoria}</Typography>
+                                        <Typography variant="body2" color="textSecondary">Categoria: {vaga.category ? vaga.category.titulo : 'Não tem'}</Typography>
                                     </CardContent>
                                 </Card>
                             </Grid>
