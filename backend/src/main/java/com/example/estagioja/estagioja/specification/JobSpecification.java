@@ -22,12 +22,12 @@ public class JobSpecification {
                 company != null ? criteriaBuilder.equal(root.get("company"), company) : null;
     }
 
-    public static Specification<Job> hasMinSalario(int minSalario) {
+    public static Specification<Job> hasMinSalario(Integer minSalario) {
         return (root, query, criteriaBuilder) ->
                 minSalario > 0 ? criteriaBuilder.greaterThanOrEqualTo(root.get("salario"), minSalario) : null;
     }
 
-    public static Specification<Job> hasMaxSalario(int maxSalario) {
+    public static Specification<Job> hasMaxSalario(Integer maxSalario) {
         return (root, query, criteriaBuilder) ->
                 maxSalario > 0 ? criteriaBuilder.lessThanOrEqualTo(root.get("salario"), maxSalario) : null;
     }

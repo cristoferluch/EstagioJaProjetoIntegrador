@@ -59,13 +59,10 @@ public class JobService {
 
         try {
             category = this.categoryService.getCategoryById(createJobDto.category()).orElse(null);
+        } catch (IllegalArgumentException $e) {
+            category = this.createCategory(createJobDto);
         } catch (CategoryException $e) {
-            CreateCategoryDto createCategoryDto = new CreateCategoryDto(createJobDto.category());
-            try {
-                category = this.categoryService.createCategory(createCategoryDto);
-            } catch (CategoryException $ex) {
-                throw new JobException("Erro ao criar a categoria");
-            }
+            category = this.createCategory(createJobDto);
         }
 
         return Job.builder()
@@ -80,9 +77,21 @@ public class JobService {
                 .build();
     }
 
+    private Category createCategory(CreateJobDto createJobDto)  throws JobException {
+        CreateCategoryDto createCategoryDto = new CreateCategoryDto(createJobDto.category());
+        try {
+            return this.categoryService.createCategory(createCategoryDto);
+        } catch (CategoryException $ex) {
+            throw new JobException("Erro ao criar a categoria");
+        }
+    }
+
     public List<Job> listJobs(FilterJobDto filterJobDto) {
+        Integer minSalario = filterJobDto.minSalario() != null ? filterJobDto.minSalario() : 0;
+        Integer maxSalario = filterJobDto.maxSalario() != null ? filterJobDto.maxSalario() : Integer.MAX_VALUE;
+
         Optional<Category> category = Optional.empty();
-        if (filterJobDto.category() != null) {
+        if (filterJobDto.category() != null && ! filterJobDto.category().isEmpty()) {
             try {
                 category = this.categoryService.getCategoryById(filterJobDto.category());
             } catch (CategoryException categoryException) {
@@ -91,7 +100,7 @@ public class JobService {
         }
 
         Optional<Company> company = Optional.empty();
-        if (filterJobDto.companyId() != null) {
+        if (filterJobDto.companyId() != null && ! filterJobDto.companyId().isEmpty()) {
             try {
                 company = this.getCompanyById(filterJobDto.companyId());
             } catch (JobException jobException) {
@@ -102,8 +111,8 @@ public class JobService {
         Specification<Job> spec = Specification.where(JobSpecification.hasTitulo(filterJobDto.titulo()))
                 .and(JobSpecification.hasCategory(category.orElse(null)))
                 .and(JobSpecification.hasCompany(company.orElse(null)))
-                .and(JobSpecification.hasMinSalario(filterJobDto.minSalario()))
-                .and(JobSpecification.hasMaxSalario(filterJobDto.maxSalario()));
+                .and(JobSpecification.hasMinSalario(minSalario))
+                .and(JobSpecification.hasMaxSalario(maxSalario));
 
         return this.jobRepository.findAll(spec);
     }

@@ -22,7 +22,7 @@ const CreateVaga = () => {
 
     // Carregar as categorias ao montar o componente
     useEffect(() => {
-        fetch('http://localhost:8080/categorias')
+        fetch('http://localhost:8080/categories')
             .then((response) => response.json())
             .then((data) => setCategorias(data))
             .catch((error) => console.error('Erro ao carregar categorias:', error));
@@ -158,8 +158,8 @@ const CreateVaga = () => {
                         required
                     >
                         {categorias.map((categoria) => (
-                            <MenuItem key={categoria.id} value={categoria.nome}>
-                                {categoria.nome}
+                            <MenuItem key={categoria.id} value={categoria.id}>
+                                {categoria.titulo}
                             </MenuItem>
                         ))}
                         <MenuItem value="Outra" onClick={() => setShowCustomCategoria(true)}>

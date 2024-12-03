@@ -22,9 +22,9 @@ public class JobController {
 
     @PostMapping("")
     public ResponseEntity<?> createJob(@RequestBody CreateJobDto createJobDto) throws Exception  {
-        Job jog = this.jobService.createJob(createJobDto);
-        if (jog.getId() != null) {
-            return ResponseEntity.ok(new JobResponseDto(jog.getId()));
+        Job job = this.jobService.createJob(createJobDto);
+        if (job.getId() != null) {
+            return ResponseEntity.ok(new JobResponseDto(job.getId()));
         }
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Um erro inesperado ocorreu."));
@@ -33,8 +33,6 @@ public class JobController {
     @GetMapping("/{jobId}")
     public ResponseEntity<Job> getJobById(@PathVariable("jobId") String jobId) throws Exception  {
         var Job = this.jobService.getJobById(jobId);
-
-        //Verifica se o vaga existe
         if(Job.isPresent()){
             return ResponseEntity.ok(Job.get());
         } else {
@@ -43,7 +41,8 @@ public class JobController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Job>> listJobs(@RequestParam FilterJobDto filterJobDto) {
+    public ResponseEntity<List<Job>> listJobs(@RequestParam(value = "titulo", required = false) String titulo, @RequestParam(value = "companyId", required = false) String companyId, @RequestParam(value = "minSalario", required = false) Integer minSalario, @RequestParam(value = "maxSalario", required = false) Integer maxSalario, @RequestParam(value = "category", required = false) String category) {
+        FilterJobDto filterJobDto = new FilterJobDto(titulo, category, companyId, minSalario, maxSalario);
         var jobs = this.jobService.listJobs(filterJobDto);
         return ResponseEntity.ok(jobs);
     }

@@ -28,18 +28,11 @@ public class SecurityConfigurations {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/jobs").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/jobs/*").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/jobs/*").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/jobs/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/jobs").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/jobs/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/login/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register/*").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/auth/update/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/auth/user/*").authenticated()
-
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.GET, "/auth/company/*").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/update/company/*").authenticated()
+                        .anyRequest().permitAll()
                 )
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();

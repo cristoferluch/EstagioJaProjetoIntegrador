@@ -1,7 +1,9 @@
 package com.example.estagioja.estagioja.controller.authentication;
 
+import com.example.estagioja.estagioja.controller.company.CompanyResponseDto;
 import com.example.estagioja.estagioja.controller.company.CreateCompanyDto;
 import com.example.estagioja.estagioja.controller.company.UpdateCompanyDto;
+import com.example.estagioja.estagioja.controller.job.JobResponseDto;
 import com.example.estagioja.estagioja.controller.user.CreateUserDto;
 import com.example.estagioja.estagioja.controller.user.LoginResponseDto;
 import com.example.estagioja.estagioja.controller.user.UpdateUserDto;
@@ -31,6 +33,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.UUID;
 
 
 @RestController
@@ -241,5 +244,34 @@ public class AuthenticationController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Um erro inesperado ocorreu."));
         }
+    }
+
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<?> getCompanyById(@PathVariable("companyId") String companyId, HttpServletRequest request) throws CompanyException {
+        String claims = tokenService.validateToken(request.getHeader("Authorization").substring(7));
+        if (claims == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "Token inválido ou expirado."));
+        }
+
+        var company = this.companyService.getCompanyById(companyId);
+
+        return company.map(c -> {
+            CompanyResponseDto companyResponseDto = new CompanyResponseDto(
+                    c.getId(),
+                    c.getNome(),
+                    c.getEmail(),
+                    c.getCelular(),
+                    c.getCnpj(),
+                    c.getSenha(),
+                    c.getUf(),
+                    c.getCep(),
+                    c.getMunicipio(),
+                    c.getEndereco(),
+                    c.getBairro(),
+                    c.getNumero()
+            );
+            return ResponseEntity.ok(companyResponseDto);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

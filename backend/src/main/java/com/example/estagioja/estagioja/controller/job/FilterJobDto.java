@@ -4,6 +4,6 @@ public record FilterJobDto(
         String titulo,
         String category,
         String companyId,
-        int minSalario,
-        int maxSalario) {
+        Integer minSalario,
+        Integer maxSalario) {
 }
