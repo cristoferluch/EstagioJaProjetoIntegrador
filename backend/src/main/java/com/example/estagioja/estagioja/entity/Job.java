@@ -2,6 +2,7 @@ package com.example.estagioja.estagioja.entity;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -30,7 +31,8 @@ public class Job implements Serializable {
     @NotNull
     private String titulo;
 
-    @Column(name = "descricao")
+    @Column(columnDefinition="TEXT", length = 1000)
+    //@Column(name = "descricao")
     @NotNull
     private String descricao;
 
@@ -47,9 +49,11 @@ public class Job implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
+    @JsonBackReference
     private Company company;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private Category category;
 }

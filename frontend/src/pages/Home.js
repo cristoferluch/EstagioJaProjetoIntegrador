@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { Link } from 'react-router-dom';
 import { Canvas } from '@react-three/fiber';
 import { Loader, useGLTF, OrbitControls, PerspectiveCamera, Stars } from '@react-three/drei';
 import './Home.css';
@@ -20,10 +21,20 @@ function Model({ url }) {
 export default function Home() {
     return (
         <>
-            <div className="bg" />
-            <h1 id="titulo">EstágioJá <p style={{ letterSpacing: '1px', fontSize: '38pt', textShadow: '#000000b8 1px 1px 5px' }}>Explore oportunidades que vão impulsionar sua trajetória profissional e prepare-se para o futuro!</p></h1>
+            {/* <p style={{ letterSpacing: '1px', fontSize: '38pt', textShadow: '#000000b8 1px 1px 5px', zIndex: 9999 }}>Explore oportunidades que vão impulsionar sua trajetória profissional e prepare-se para o futuro!</p> */}
 
-            <div className="canvas-stars">
+            {/* <div className="bg" /> */}
+
+            <Button
+                style={{ marginLeft: "20px", zIndex: 9999,  backgroundColor: '#333', color: 'white', marginTop: '16px' }}
+                component={Link}
+                to="/vagas"
+                variant="contained"
+                color="white">
+                Ver vagas
+            </Button>
+
+            {/* <div className="canvas-stars">
                 <Canvas dpr={[1.5, 2]} linear shadows>
                     <fog attach="fog" args={['#272730', 16, 30]} />
                     <ambientLight intensity={1000} />
@@ -43,10 +54,10 @@ export default function Home() {
                     </Suspense>
                     <OrbitControls autoRotate enablePan={false} enableZoom={false} maxPolarAngle={Math.PI / 2} minPolarAngle={Math.PI / 2} />
                 </Canvas>
-            </div>
+            </div> */}
 
             <div className="layer" />
-            <Loader />
+            {/* <Loader /> */}
         </>
     );
 }

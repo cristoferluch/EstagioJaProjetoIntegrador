@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {Box, Button, Typography, Grid, Card, CardContent, TextField, MenuItem} from '@mui/material';
+import { Box, Button, Typography, Grid, Card, CardContent, TextField, MenuItem, Container, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import Autocomplete from '@mui/material/Autocomplete';
-import "./Vagas.css";
+import { height, styled, width } from '@mui/system';
+import Swal from 'sweetalert2';
+
 
 const Vagas = () => {
     const navigate = useNavigate();
@@ -27,14 +28,14 @@ const Vagas = () => {
     const buscarCategorias = () => {
         fetch(`http://localhost:8080/categories`)
             .then(response => response.json())
-            .then(categorias => setCategorias(categorias ))
+            .then(categorias => setCategorias(categorias))
             .catch(error => console.error('Erro ao buscar dados:', error));
     };
 
     useEffect(() => {
         buscarVagas();
         buscarCategorias();
-    }, []);
+    }, [filtros]); 
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -45,22 +46,82 @@ const Vagas = () => {
         buscarVagas();
     };
 
+    const handleCreateJob = () => {
+        navigate('/criar-vaga');
+    };
+
+    const handleEditJob = (id) => {
+
+        console.log(id)
+
+        navigate(`/editar-vaga/${id}`);
+    };
+
+    const handleCreateCategory = (id) => {
+        navigate(`/categoria/`);
+    }
+
+    const handleDeleteJob = async (id) => {
+
+        try {
+            const response = await fetch(`http://localhost:8080/jobs/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            
+            const resposta = await response.json();
+            
+            if (response.ok) {
+                setVagas((prevVagas) => prevVagas.filter(vaga => vaga.id !== id));
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Vaga removida com sucesso!'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: resposta,
+                });
+            }
+
+        } catch (error) {
+            console.error('Erro:', error);
+        }
+    }
+
     return (
-        <Box sx={{ marginTop: -80 }}>
-            <Box sx={{ backgroundColor: '#f0f0f0', padding: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000 }}>
-                <Typography variant="h5">Lista de Vagas</Typography>
-                <Button className="button-criar-vaga" variant="contained" color="primary" onClick={() => navigate('/criar-vaga')}>Criar Vaga</Button>
+        <Box
+            id="container"
+            sx={{
+                display: 'flex',
+                gap: 2,
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                backgroundColor: '#f4f6f8',
+                padding: 2
+            }}
+            style={{ justifyContent: 'flex-start' }}
+        >
+
+            <Box sx={{ backgroundColor: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                <Typography variant="h5" fontWeight="bold" color="#333">Lista de Vagas</Typography>
+                <Button variant="contained" sx={{ backgroundColor: '#333', color: 'white', padding: '6px' }} onClick={handleCreateCategory}>Cadastrar Categoria</Button>
+                <Button variant="contained" sx={{ backgroundColor: '#333', color: 'white', padding: '6px' }} onClick={handleCreateJob}>Criar Vaga</Button>
             </Box>
 
-            <Box sx={{ paddingTop: 2, padding: 4, marginTop: 50 }}>
-                <Box sx={{ marginBottom: 4, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            <Container sx={{ padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0px 0px 10px rgba(0,0,0,0.1)' }}>
+                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
                     <TextField
                         label="Título"
                         name="titulo"
                         value={filtros.titulo}
                         onChange={handleInputChange}
                         size="small"
-                        sx={{ height: 40 }} // Ajuste a altura dos campos
+                        fullWidth
+                        sx={{ maxWidth: 220 }}
                     />
                     <TextField
                         label="Salário Mínimo"
@@ -69,7 +130,8 @@ const Vagas = () => {
                         value={filtros.minSalario}
                         onChange={handleInputChange}
                         size="small"
-                        sx={{ height: 40 }} // Ajuste a altura dos campos
+                        fullWidth
+                        sx={{ maxWidth: 220 }}
                     />
                     <TextField
                         label="Salário Máximo"
@@ -78,7 +140,8 @@ const Vagas = () => {
                         value={filtros.maxSalario}
                         onChange={handleInputChange}
                         size="small"
-                        sx={{ height: 40 }} // Ajuste a altura dos campos
+                        fullWidth
+                        sx={{ maxWidth: 220 }}
                     />
                     <TextField
                         name="category"
@@ -87,7 +150,8 @@ const Vagas = () => {
                         select
                         size="small"
                         onChange={handleInputChange}
-                        sx={{ height: 40, width: 300 }} // Ajuste a altura dos campos
+                        fullWidth
+                        sx={{ maxWidth: 220 }}
                     >
                         {categorias.map((categoria) => (
                             <MenuItem key={categoria.id} value={categoria.id}>
@@ -95,33 +159,84 @@ const Vagas = () => {
                             </MenuItem>
                         ))}
                     </TextField>
-                    <Button variant="contained" color="secondary" onClick={handleFiltrar}>Filtrar</Button>
+                    <Button variant="contained" sx={{ height: '40px', width: '140px', backgroundColor: '#333', color: 'white' }} onClick={handleFiltrar}>Filtrar</Button>
                 </Box>
+            </Container>
 
-                <Grid container spacing={2}>
+            <Container sx={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Grid container spacing={3}>
                     {Array.isArray(vagas) && vagas.length > 0 ? (
                         vagas.map((vaga) => (
-                            <Grid item xs={12} sm={6} md={4} key={vaga.id}>
-                                <Card>
-                                    <CardContent>
+                            <Grid item xs={12} sm={8} md={6} lg={4} key={vaga.id}>
+                                <StyledCard sx={{
+                                    boxShadow: 3,
+                                    borderRadius: 3,
+                                    transition: 'transform 0.3s ease-in-out',
+                                    '&:hover': {
+                                        transform: 'scale(1.05)',
+                                        boxShadow: 6,
+                                    },
+                                }}>
+                                    <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <Typography variant="h6">{vaga.titulo}</Typography>
-                                            <Button className="button-criar-vaga" size="small" onClick={() => navigate(`/editar-vaga/${vaga.id}`)}>Editar</Button>
+                                            <Typography variant="h6" fontWeight="bold" color="#333">{vaga.titulo}</Typography>
                                         </Box>
-                                        <Typography variant="body2" color="textSecondary">{vaga.descricao}</Typography>
-                                        <Typography variant="body2" color="textSecondary">Salário: R${vaga.salario}</Typography>
-                                        <Typography variant="body2" color="textSecondary">Categoria: {vaga.categoria}</Typography>
+                                        <Typography variant="body2" color="textSecondary" sx={{ marginTop: 1, lineHeight: 1.5 }}>
+                                            {vaga.descricao}
+                                        </Typography>
+                                        <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 'bold' }}>Salário: R${vaga.salario}</Typography>
+                                       
+                                        <Typography variant="body2" color="textSecondary">Categoria: {vaga.category.titulo}</Typography>
+
+                                        <Box sx={{ marginTop: 'auto', display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                                            <Button
+                                                size="small"
+                                                color="error"
+                                                sx={{
+                                                    fontWeight: 'bold',
+                                                }}
+                                                onClick={() => handleDeleteJob(vaga.id)}>
+                                                Excluir
+                                            </Button>
+                                            <Button
+                                                size="small"
+                                                color="primary"
+                                                sx={{
+                                                    fontWeight: 'bold',
+                                                }}
+                                                onClick={() => handleEditJob(vaga.id)}>
+                                                Editar
+                                            </Button>
+                                        </Box>
                                     </CardContent>
-                                </Card>
+                                </StyledCard>
                             </Grid>
                         ))
                     ) : (
-                        <Typography variant="h6" color="textSecondary">Nenhuma vaga disponível</Typography>
+                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <Typography variant="h6" color="textSecondary" sx={{ textAlign: 'center' }}>
+                                Nenhuma vaga disponível
+                            </Typography>
+                        </Grid>
                     )}
                 </Grid>
-            </Box>
+            </Container>
+
+
         </Box>
     );
 };
+
+const StyledCard = styled(Paper)(({ theme }) => ({
+    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+    borderRadius: '8px',
+    backgroundColor: '#fff',
+    padding: theme.spacing(2),
+    '&:hover': {
+        boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.15)',
+        transform: 'translateY(-5px)',
+        transition: 'all 0.3s ease',
+    },
+}));
 
 export default Vagas;

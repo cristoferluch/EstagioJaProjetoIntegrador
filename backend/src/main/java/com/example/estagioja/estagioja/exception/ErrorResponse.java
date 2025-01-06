@@ -1,6 +1,6 @@
 package com.example.estagioja.estagioja.exception;
 
-public class ErrorResponse {
+public class ErrorResponse extends Throwable {
     private int status;
     private String message;
 

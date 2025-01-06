@@ -2,13 +2,18 @@
 
 html,
 body,
-#root,
-.bg,
-canvas {
+#root {
     margin: 0;
     padding: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
+}
+
+
+.bg,
+canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 body {
@@ -21,19 +26,6 @@ body {
     background: radial-gradient(at 50% 100%, #873740 0%, #272730 40%, #171720 80%, #070710 100%);
 }
 
-#titulo {
-    position: absolute;
-    top: 80px;
-    left: 60px;
-    font-weight: 900;
-    font-size: 5em;
-    margin: 0;
-    color: peru;
-    line-height: 0.6em;
-    letter-spacing: -2px;
-    text-align: left;
-    z-index: 9999;
-}
 
 .canvas-stars {
     position: fixed;
@@ -56,7 +48,3 @@ body {
     z-index: 1;
 }
 
-canvas {
-    width: 100%;
-    height: 100%;
-}

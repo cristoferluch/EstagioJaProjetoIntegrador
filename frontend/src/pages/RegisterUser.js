@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Swal from 'sweetalert2';
 import image from '../assets/register.gif';
-import './RegisterScreen.css';
+
 import { useNavigate } from 'react-router-dom';
 import FormUser from './FormUser';
 
@@ -26,7 +26,7 @@ const RegisterForm = () => {
         genero: '',
         dataNascimento: ''
     });
-    
+
     const disabledFields = {
         nome: false,
         sobrenome: false,
@@ -116,7 +116,9 @@ const RegisterForm = () => {
     return (
         <Box id="container" sx={{ display: 'flex', gap: 5 }}>
 
-            <img src={image} fullWidth ></img>
+
+            <img src={image} style={{ width: '100%', height: 'auto' }} ></img>
+
 
             <form onSubmit={handleSubmit}>
                 <h2>Cadastro</h2>
@@ -124,11 +126,13 @@ const RegisterForm = () => {
                 <FormUser formData={formData} setFormData={setFormData} disabledFields={disabledFields} requiredFields={requiredFields} />
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button type="submit" variant="outlined" fullWidth sx={{ backgroundColor: 'black', color: 'white' }}>Cadastrar</Button>
-                    <Button variant="outlined" sx={{ width: '200px', borderColor: 'black', color: 'black' }} onClick={handleRegisterClick}>Voltar</Button>
+                    <Button type="submit" variant="outlined" fullWidth sx={{ backgroundColor: '#333', color: 'white' }}>Cadastrar</Button>
+                    <Button variant="outlined" sx={{ width: '200px', borderColor: '#333', color: '#333' }} onClick={handleRegisterClick}>Voltar</Button>
                 </Box>
             </form>
         </Box>
+
+
     );
 };
 

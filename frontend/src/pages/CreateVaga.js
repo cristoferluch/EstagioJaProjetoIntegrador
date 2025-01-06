@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, MenuItem } from '@mui/material';
-import './CreateVaga.css';
+
 import { useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
 
@@ -11,16 +11,15 @@ const CreateVaga = () => {
         salario: '',
         category: '',
         jobId: '',
-        companyId: localStorage.getItem("id"),
-        customCategoria: ''  // Novo campo para categoria personalizada
+        companyId: '8a3927a6-5972-4124-8223-5d0b55b73fec',
+        customCategoria: ''
     });
 
-    const [categorias, setCategorias] = useState([]); // Estado para armazenar categorias do banco
-    const [showCustomCategoria, setShowCustomCategoria] = useState(false); // Controla se o campo customCategoria será mostrado
+    const [categorias, setCategorias] = useState([]);
+    const [showCustomCategoria, setShowCustomCategoria] = useState(false);
 
     const navigate = useNavigate();
 
-    // Carregar as categorias ao montar o componente
     useEffect(() => {
         fetch('http://localhost:8080/categories')
             .then((response) => response.json())
@@ -57,8 +56,8 @@ const CreateVaga = () => {
         try {
             formData.jobId = '';
             if (formData.customCategoria) {
-                
-                formData.category = formData.customCategoria;  // Usa a nova categoria
+
+                formData.category = formData.customCategoria;
             }
 
             const response = await fetch('http://localhost:8080/jobs', {
@@ -96,21 +95,12 @@ const CreateVaga = () => {
     const safeFormData = formData || {};
 
     return (
-        <div>
-            <h2>Criar Vaga</h2>
-            <form onSubmit={handleSubmit}>
-                <Box sx={{position: 'absolute', top: 16, right: 16}}>
-                    <Button
-                        className="button-ver-vagas2"
-                        variant="contained"
-                        color="primary"
-                        onClick={() => navigate('/vagas')}
-                    >
-                        Ver Vagas
-                    </Button>
-                </Box>
+        <Box id="container" sx={{ display: 'flex', gap: 5 }}>
 
-                <Box sx={{display: 'flex', gap: 1}}>
+            <form onSubmit={handleSubmit}>
+                <h2>Criar Vaga</h2>
+
+                <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
                         name="titulo"
                         label="Título"
@@ -122,7 +112,7 @@ const CreateVaga = () => {
                     />
                 </Box>
 
-                <Box sx={{display: 'flex', gap: 1}}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
                         name="descricao"
                         label="Descrição"
@@ -136,7 +126,7 @@ const CreateVaga = () => {
                     />
                 </Box>
 
-                <Box sx={{display: 'flex', gap: 1}}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
                         name="salario"
                         label="Salário"
@@ -157,36 +147,26 @@ const CreateVaga = () => {
                         select
                         required
                     >
+
                         {categorias.map((categoria) => (
                             <MenuItem key={categoria.id} value={categoria.id}>
                                 {categoria.titulo}
                             </MenuItem>
                         ))}
-                        <MenuItem value="Outra" onClick={() => setShowCustomCategoria(true)}>
-                            Outra (digite a categoria)
-                        </MenuItem>
+
                     </TextField>
 
-                    {showCustomCategoria && (
-                        <TextField
-                            name="customCategoria"
-                            label="Nova Categoria"
-                            value={safeFormData.customCategoria || ''}
-                            onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                        />
-                    )}
+
                 </Box>
 
-                <Box sx={{display: 'flex', gap: 1}}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button type="submit" variant="outlined" fullWidth
-                            sx={{backgroundColor: 'black', color: 'white'}}>Cadastrar</Button>
-                    <Button variant="outlined" sx={{width: '200px', borderColor: 'black', color: 'black'}}
-                            onClick={handleClick}>Voltar</Button>
+                        sx={{ backgroundColor: '#333', color: 'white' }}>Cadastrar</Button>
+                    <Button variant="outlined" sx={{ width: '200px', borderColor: '#333', color: '#333' }}
+                        onClick={handleClick}>Voltar</Button>
                 </Box>
             </form>
-        </div>
+        </Box>
     );
 };
 

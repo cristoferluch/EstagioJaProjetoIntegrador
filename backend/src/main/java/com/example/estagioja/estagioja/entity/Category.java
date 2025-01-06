@@ -1,14 +1,15 @@
 package com.example.estagioja.estagioja.entity;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "category")
@@ -32,4 +33,8 @@ public class Category implements Serializable {
     @CreationTimestamp
     @Column(name = "data_inclusao")
     private Instant dataInclusao;
+
+    @OneToMany(mappedBy = "category")
+    @JsonManagedReference
+    private List<Job> jobs;
 }

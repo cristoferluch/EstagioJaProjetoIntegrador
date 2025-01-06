@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, TextField, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
 import InputMask from 'react-input-mask';
-import './FormCompany.css';
+
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) => {
@@ -17,15 +17,15 @@ const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) 
     return (
         <>
             <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
-            <Button
-                className="button-ver-vagas"
-                variant="contained"
-                color="primary"
-                onClick={() => navigate('/vagas')}
-            >
-                Ver vagas
-            </Button>
-        </Box>
+                <Button
+                    className="button-ver-vagas"
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate('/vagas')}
+                >
+                    Ver vagas
+                </Button>
+            </Box>
 
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <TextField
@@ -102,7 +102,7 @@ const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) 
                     required={requiredFields.senha}
                     inputProps={{ minLength: 6 }}
                 />
-                
+
                 <FormControl fullWidth margin="normal">
                     <InputLabel id="uf-label">UF</InputLabel>
                     <Select
