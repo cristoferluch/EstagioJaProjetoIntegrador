@@ -10,7 +10,6 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Swal from 'sweetalert2';
 import image from '../assets/register.gif';
-import './RegisterCompany.css';
 import { useNavigate } from 'react-router-dom';
 
 const RegisterCompany = () => {
@@ -125,7 +124,7 @@ const RegisterCompany = () => {
 
     return (
         <Box id="container" sx={{ display: 'flex', gap: 5 }}>
-            <img src={image} alt="register-gif"></img>
+            <img src={image} style={{ width: '100%', height: 'auto' }} alt="register-gif"></img>
 
             <form onSubmit={handleSubmit}>
                 <h2>Cadastro de Empresa</h2>
@@ -173,8 +172,8 @@ const RegisterCompany = () => {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button type="submit" variant="outlined" fullWidth sx={{ backgroundColor: 'black', color: 'white' }}>Cadastrar</Button>
-                    <Button variant="outlined" sx={{ width: '200px', borderColor: 'black', color: 'black' }} onClick={handleRegisterClick}>Voltar</Button>
+                    <Button type="submit" variant="outlined" fullWidth sx={{ backgroundColor: '#333', color: 'white' }}>Cadastrar</Button>
+                    <Button variant="outlined" sx={{ width: '200px', borderColor: '#333', color: '#333' }} onClick={handleRegisterClick}>Voltar</Button>
                 </Box>
             </form>
         </Box>

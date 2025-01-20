@@ -1,8 +1,8 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Swal from 'sweetalert2';
-import './RegisterScreen.css';
+import './Global.css'
 import { useNavigate } from 'react-router-dom';
 import FormUser from './FormUser';
 
@@ -60,9 +60,6 @@ const User = () => {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
-
-                
-
                 if (!response.ok) {
                     const errorResponse = await response.json();
                     Swal.fire({
@@ -102,7 +99,7 @@ const User = () => {
         try {
 
             const userId = localStorage.getItem("id");
-            const token = localStorage.getItem("token"); 
+            const token = localStorage.getItem("token");
 
             const response = await fetch(`http://localhost:8080/auth/update/user/${userId}`, {
                 method: 'PUT',
@@ -135,15 +132,15 @@ const User = () => {
 
     return (
         <Box id="container" sx={{ display: 'flex', gap: 5 }}>
-            <form onSubmit={handleSubmit}>
+            <Box component="form" sx={{ width: '400px' }} onSubmit={handleSubmit}>
                 <h2>Dados cadastrais</h2>
 
-                <FormUser formData={formData} setFormData={setFormData} disabledFields={disabledFields} requiredFields={requiredFields}/>
+                <FormUser formData={formData} setFormData={setFormData} disabledFields={disabledFields} requiredFields={requiredFields} />
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button type="submit" variant="outlined" fullWidth sx={{ backgroundColor: 'black', color: 'white' }}>Atualizar</Button>
                 </Box>
-            </form>
+            </Box>
         </Box>
     );
 };

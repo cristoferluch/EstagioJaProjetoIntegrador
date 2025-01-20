@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Swal from 'sweetalert2';
-import './Company.css';
 import { useNavigate } from 'react-router-dom';
-import FormCompany from './FormCompany'; // Supondo que você tenha um componente similar para a empresa.
+import FormCompany from './FormCompany';
 
 const Company = () => {
     const navigate = useNavigate();

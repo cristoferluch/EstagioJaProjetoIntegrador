@@ -3,8 +3,8 @@ import { Box, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/
 import InputMask from 'react-input-mask';
 import { HandleCepBlur } from '../utils/CepUtils';
 
-const FormUser = ({ formData, setFormData, disabledFields, requiredFields}) => {
-    
+const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => {
+
     const handleCepBlur = (event) => {
         const cep = event.target.value;
         console.log(cep)
@@ -44,13 +44,13 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields}) => {
                 </InputMask>
 
                 <FormControl fullWidth margin="normal">
-                        <InputLabel id="demo-simple-select-label">Gênero</InputLabel>
-                        <Select labelId="demo-simple-select-label" id="demo-simple-select" name="genero" label="Gênero" onChange={handleChange} value={formData.genero} required>
-                            <MenuItem value="masculino">Masculino</MenuItem>
-                            <MenuItem value="feminino">Feminino</MenuItem>
-                            <MenuItem value="outro">Outro</MenuItem>
-                        </Select>
-                    </FormControl>
+                    <InputLabel id="demo-simple-select-label">Gênero</InputLabel>
+                    <Select labelId="demo-simple-select-label" id="demo-simple-select" name="genero" label="Gênero" onChange={handleChange} value={formData.genero} required>
+                        <MenuItem value="masculino">Masculino</MenuItem>
+                        <MenuItem value="feminino">Feminino</MenuItem>
+                        <MenuItem value="outro">Outro</MenuItem>
+                    </Select>
+                </FormControl>
             </Box>
 
             <Box sx={{ display: 'flex', gap: 1 }}>

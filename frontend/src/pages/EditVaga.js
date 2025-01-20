@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, MenuItem } from '@mui/material';
-import './EditVaga.css';
-import { useNavigate, useParams } from 'react-router-dom';
+
 import Swal from "sweetalert2";
+import { useNavigate, useParams } from 'react-router-dom';
 
 const EditVaga = () => {
     const { jobId } = useParams();
+
     const [formData, setFormData] = useState({
         titulo: '',
         descricao: '',
@@ -26,11 +27,12 @@ const EditVaga = () => {
                 const response = await fetch(`http://localhost:8080/jobs/${jobId}`);
                 const vaga = await response.json();
                 if (response.ok) {
+                    console.log(vaga)
                     setFormData({
                         titulo: vaga.titulo,
                         descricao: vaga.descricao,
                         salario: vaga.salario,
-                        category: vaga.category || '',
+                        category: vaga.category.id,
                         companyId: vaga.companyId,
                         customCategoria: ''
                     });
@@ -121,21 +123,11 @@ const EditVaga = () => {
     const safeFormData = formData || {};
 
     return (
-        <div>
-            <h2>Editar Vaga</h2>
+        <Box id="container" sx={{ display: 'flex', gap: 5 }}>
             <form onSubmit={handleSubmit}>
-                <Box sx={{position: 'absolute', top: 16, right: 16}}>
-                    <Button
-                        className="button-ver-vagas2"
-                        variant="contained"
-                        color="primary"
-                        onClick={() => navigate('/vagas')}
-                    >
-                        Ver Vagas
-                    </Button>
-                </Box>
+                <h2>Editar Vaga</h2>
 
-                <Box sx={{display: 'flex', gap: 1}}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
                         name="titulo"
                         label="Título"
@@ -147,7 +139,7 @@ const EditVaga = () => {
                     />
                 </Box>
 
-                <Box sx={{display: 'flex', gap: 1}}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
                         name="descricao"
                         label="Descrição"
@@ -161,7 +153,7 @@ const EditVaga = () => {
                     />
                 </Box>
 
-                <Box sx={{display: 'flex', gap: 1}}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
                         name="salario"
                         label="Salário"
@@ -187,9 +179,7 @@ const EditVaga = () => {
                                 {categoria.titulo}
                             </MenuItem>
                         ))}
-                        <MenuItem value="Outra" onClick={() => setShowCustomCategoria(true)}>
-                            Outra (digite a categoria)
-                        </MenuItem>
+            
                     </TextField>
 
                     {showCustomCategoria && (
@@ -204,14 +194,14 @@ const EditVaga = () => {
                     )}
                 </Box>
 
-                <Box sx={{display: 'flex', gap: 1}}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button type="submit" variant="outlined" fullWidth
-                            sx={{backgroundColor: 'black', color: 'white'}}>Salvar Alterações</Button>
-                    <Button variant="outlined" sx={{width: '200px', borderColor: 'black', color: 'black'}}
-                            onClick={handleClick}>Voltar</Button>
+                        sx={{ backgroundColor: 'black', color: 'white' }}>Salvar Alterações</Button>
+                    <Button variant="outlined" sx={{ width: '200px', borderColor: 'black', color: 'black' }}
+                        onClick={handleClick}>Voltar</Button>
                 </Box>
             </form>
-        </div>
+        </Box>
     );
 };
 

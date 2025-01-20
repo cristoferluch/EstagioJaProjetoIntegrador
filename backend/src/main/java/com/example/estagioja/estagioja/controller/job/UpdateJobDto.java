@@ -7,5 +7,5 @@ public record UpdateJobDto(
         @NotBlank String titulo,
         @NotBlank String descricao,
         @NotBlank String category,
-        @Positive int salario){
+        @Positive int salario) {
 }

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
-import './LoginScreen.css';
+import './Global.css';
 import image from '../assets/login.gif';
 import Swal from 'sweetalert2';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {FormControlLabel} from "@mui/material";
+import { FormControlLabel } from "@mui/material";
 
 const LoginForm = () => {
 
@@ -21,7 +22,7 @@ const LoginForm = () => {
     });
 
     const handleRegisterClick = () => {
-        
+
         if (!formData.isCompany) {
             navigate('/cadastro');
         } else {
@@ -52,10 +53,10 @@ const LoginForm = () => {
                 toast.onmouseleave = Swal.resumeTimer;
             },
             willClose: () => {
-                if(formData.isCompany === true){
-                navigate('/company');
+                if (formData.isCompany === true) {
+                    navigate('/company');
                 } else {
-                navigate('/user'); 
+                    navigate('/user');
                 }
             }
         });
@@ -84,7 +85,7 @@ const LoginForm = () => {
                     icon: "success",
                     title: formData.isCompany === false ? "Usuário logado com sucesso!" : "Empresa logado com sucesso!",
                 });
-                
+
                 localStorage.setItem("token", resposta.token);
                 localStorage.setItem("id", resposta.id);
             }
@@ -96,32 +97,57 @@ const LoginForm = () => {
 
     return (
 
-        <Box id="container" sx={{ display: 'flex', gap: 5 }}>
+        <Box id="container" sx={{ display: 'flex', gap: 1 }}>
 
-            <Box id="div_esquerda">
 
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-                    <h1 id="esquerda">Estágio</h1>
-                    <h1 id="direita">Já</h1>
+            <img img src={image} style={{ width: '100%', height: 'auto' }} ></img>
+
+
+
+
+
+            <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+
+                <h2>Entrar</h2>
+
+                <TextField
+                    name="email"
+                    label="E-mail"
+                    value={formData.email}
+                    onChange={handleChange}
+                    fullWidth margin="normal"
+                    required
+                    sx={{ width: '300px' }}
+                />
+                <TextField
+                    type="password"
+                    name="password"
+                    label="Senha"
+                    value={formData.password}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                    required
+                    sx={{ width: '300px' }}
+                />
+                <FormControlLabel
+                    control={<Switch
+                        ame="isCompany"
+                        checked={formData.isCompany}
+                        onChange={(e) => setFormData({ ...formData, isCompany: e.target.checked })} />}
+                    label="É uma empresa"
+                />
+
+                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                    <Button type="submit" variant="contained" sx={{ width: '150px', backgroundColor: '#333', color: 'white', marginTop: '16px' }}>Entrar</Button>
+                    <Button variant="outlined" sx={{ width: '150px', borderColor: '#333', color: '#333', marginTop: '16px' }} onClick={handleRegisterClick}>Cadastrar</Button>
                 </Box>
-                <img img src={image} fullWidth ></img>
-
-            </Box>
-
-            <form onSubmit={handleSubmit}>
-
-                <h2>Login</h2>
-
-                <TextField name="email" label="E-mail" value={formData.email} onChange={handleChange} fullWidth margin="normal" required />
-                <TextField type="password" name="password" label="Senha" value={formData.password} onChange={handleChange} fullWidth margin="normal" required />
-                <FormControlLabel control={<Switch name="isCompany" checked={formData.isCompany} onChange={(e) => setFormData({ ...formData, isCompany: e.target.checked })} />} label="É uma empresa"/>
-                
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button type="submit" variant="contained" sx={{ width: '200px', backgroundColor: 'black', color: 'white', marginTop: '16px' }}>Entrar</Button>
-                    <Button variant="outlined" sx={{ width: '200px', borderColor: 'black', color: 'black', marginTop: '16px' }} onClick={handleRegisterClick}>Cadastrar</Button>
+                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                    <Button to="/" component={Link} variant="outlined" sx={{ width: '150px', borderColor: '#333', color: '#333', marginTop: '16px' }}>Voltar</Button>
                 </Box>
             </form>
         </Box>
+
 
     );
 }

@@ -6,7 +6,5 @@ public class CategoryException extends Exception {
         super(message);
     }
 
-    public CategoryException(String message, Throwable cause) {
-        super(message, cause);
-    }
+
 }

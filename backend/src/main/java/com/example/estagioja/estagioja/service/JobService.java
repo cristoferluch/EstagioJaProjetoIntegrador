@@ -1,21 +1,23 @@
 package com.example.estagioja.estagioja.service;
 
-import com.example.estagioja.estagioja.controller.category.CreateCategoryDto;
-import com.example.estagioja.estagioja.controller.job.FilterJobDto;
-import com.example.estagioja.estagioja.controller.job.UpdateJobDto;
+import com.example.estagioja.estagioja.controller.category.CategoryResponseDto;
+import com.example.estagioja.estagioja.controller.company.CompanyResponseDto;
 import com.example.estagioja.estagioja.controller.job.CreateJobDto;
+import com.example.estagioja.estagioja.controller.job.FilterJobDto;
+import com.example.estagioja.estagioja.controller.job.JobResponseDto;
+import com.example.estagioja.estagioja.controller.job.UpdateJobDto;
 import com.example.estagioja.estagioja.entity.Category;
 import com.example.estagioja.estagioja.entity.Company;
 import com.example.estagioja.estagioja.entity.Job;
 import com.example.estagioja.estagioja.exception.CategoryException;
 import com.example.estagioja.estagioja.exception.JobException;
-import com.example.estagioja.estagioja.repository.CompanyRepository;
 import com.example.estagioja.estagioja.repository.JobRepository;
+import com.example.estagioja.estagioja.repository.CompanyRepository;
 import com.example.estagioja.estagioja.specification.JobSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -26,7 +28,6 @@ import java.util.UUID;
 public class JobService {
 
     private final CompanyRepository companyRepository;
-
     private final JobRepository jobRepository;
     private final CategoryService categoryService;
 
@@ -38,32 +39,59 @@ public class JobService {
     }
 
     @Transactional
-    public Job createJob(CreateJobDto createJobDto) throws JobException {
+    public Job createJob(CreateJobDto createJobDto) throws JobException, CategoryException {
         Job entity = buildJobEntity(createJobDto);
-        Job jobSaved = this.jobRepository.save(entity);
-        return jobSaved;
+        return jobRepository.save(entity);
     }
 
-    public Optional<Job> getJobById(String jobId) throws JobException {
-        return Optional.ofNullable(this.jobRepository.findById(UUID.fromString(jobId)).orElseThrow(() -> new JobException("Emprego não encontrado: " + jobId)));
+    public JobResponseDto getJobById(String jobId) throws JobException {
+        UUID id = UUID.fromString(jobId);
+        Job job = jobRepository.findById(id)
+                .orElseThrow(() -> new JobException("Emprego não encontrado: " + jobId));
+
+        Category category = job.getCategory();
+        CategoryResponseDto categoryResponseDto = (category != null) ?
+                new CategoryResponseDto(category.getId(), category.getTitulo()) : null;
+
+        Company company = job.getCompany();
+        CompanyResponseDto companyResponseDto = (company != null) ?
+                new CompanyResponseDto(
+                        company.getId(),
+                        company.getNome(),
+                        company.getEmail(),
+                        company.getCelular(),
+                        company.getCnpj(),
+                        company.getSenha(),
+                        company.getUf(),
+                        company.getCep(),
+                        company.getMunicipio(),
+                        company.getEndereco(),
+                        company.getBairro(),
+                        company.getNumero()
+                ) : null;
+
+        return new JobResponseDto(
+                job.getId(),
+                job.getTitulo(),
+                job.getDescricao(),
+                job.getSalario(),
+                companyResponseDto,
+                categoryResponseDto
+        );
     }
 
     public Optional<Company> getCompanyById(String companyId) throws JobException {
-        return Optional.ofNullable(this.companyRepository.findById(UUID.fromString(companyId)).orElseThrow(() -> new JobException("Empresa não encontrado: " + companyId)));
+        UUID id = UUID.fromString(companyId);
+        return Optional.ofNullable(companyRepository.findById(id)
+                .orElseThrow(() -> new JobException("Empresa não encontrada: " + companyId)));
     }
 
-    private Job buildJobEntity(CreateJobDto createJobDto) throws JobException {
+    private Job buildJobEntity(CreateJobDto createJobDto) throws JobException, CategoryException {
         Instant now = Instant.now();
-        Company company = this.getCompanyById(createJobDto.companyId()).orElse(null);
-        Category category = null;
+        Company company = getCompanyById(createJobDto.companyId()).orElse(null);
 
-        try {
-            category = this.categoryService.getCategoryById(createJobDto.category()).orElse(null);
-        } catch (IllegalArgumentException $e) {
-            category = this.createCategory(createJobDto);
-        } catch (CategoryException $e) {
-            category = this.createCategory(createJobDto);
-        }
+        Category category = categoryService.getCategoryById(String.valueOf(UUID.fromString(createJobDto.category())))
+                .orElseThrow(() -> new JobException("Categoria não encontrada"));
 
         return Job.builder()
                 .id(UUID.randomUUID())
@@ -77,30 +105,21 @@ public class JobService {
                 .build();
     }
 
-    private Category createCategory(CreateJobDto createJobDto)  throws JobException {
-        CreateCategoryDto createCategoryDto = new CreateCategoryDto(createJobDto.category());
-        try {
-            return this.categoryService.createCategory(createCategoryDto);
-        } catch (CategoryException $ex) {
-            throw new JobException("Erro ao criar a categoria");
-        }
-    }
-
-    public List<Job> listJobs(FilterJobDto filterJobDto) {
+    public List<JobResponseDto> listJobs(FilterJobDto filterJobDto) {
         Integer minSalario = filterJobDto.minSalario() != null ? filterJobDto.minSalario() : 0;
         Integer maxSalario = filterJobDto.maxSalario() != null ? filterJobDto.maxSalario() : Integer.MAX_VALUE;
 
         Optional<Category> category = Optional.empty();
-        if (filterJobDto.category() != null && ! filterJobDto.category().isEmpty()) {
+        if (filterJobDto.category() != null && !filterJobDto.category().isEmpty()) {
             try {
-                category = this.categoryService.getCategoryById(filterJobDto.category());
+                category = this.categoryService.getCategoryById(String.valueOf(UUID.fromString(filterJobDto.category())));
             } catch (CategoryException categoryException) {
                 category = Optional.empty();
             }
         }
 
         Optional<Company> company = Optional.empty();
-        if (filterJobDto.companyId() != null && ! filterJobDto.companyId().isEmpty()) {
+        if (filterJobDto.companyId() != null && !filterJobDto.companyId().isEmpty()) {
             try {
                 company = this.getCompanyById(filterJobDto.companyId());
             } catch (JobException jobException) {
@@ -114,16 +133,44 @@ public class JobService {
                 .and(JobSpecification.hasMinSalario(minSalario))
                 .and(JobSpecification.hasMaxSalario(maxSalario));
 
-        return this.jobRepository.findAll(spec);
+        List<Job> jobs = jobRepository.findAll(spec);
+
+
+        return jobs.stream()
+                .map(job -> new JobResponseDto(
+                        job.getId(),
+                        job.getTitulo(),
+                        job.getDescricao(),
+                        job.getSalario(),
+                        new CompanyResponseDto(
+                                job.getCompany().getId(),
+                                job.getCompany().getNome(),
+                                job.getCompany().getEmail(),
+                                job.getCompany().getCelular(),
+                                job.getCompany().getCnpj(),
+                                job.getCompany().getSenha(),
+                                job.getCompany().getUf(),
+                                job.getCompany().getCep(),
+                                job.getCompany().getMunicipio(),
+                                job.getCompany().getEndereco(),
+                                job.getCompany().getBairro(),
+                                job.getCompany().getNumero()
+                        ),
+                        new CategoryResponseDto(
+                                job.getCategory().getId(),
+                                job.getCategory().getTitulo()
+                        )
+                ))
+                .toList();
     }
 
     public void updateJobById(String jobId, UpdateJobDto updateJobDto) throws JobException {
-        var id = UUID.fromString(jobId);
+        UUID id = UUID.fromString(jobId);
 
-        this.jobRepository.findById(id).ifPresent(job -> {
+        jobRepository.findById(id).ifPresent(job -> {
             boolean updated = false;
 
-            if(updateJobDto.titulo() != null){
+            if (updateJobDto.titulo() != null) {
                 job.setTitulo(updateJobDto.titulo());
                 updated = true;
             }
@@ -135,26 +182,16 @@ public class JobService {
 
             if (updateJobDto.category() != null) {
                 Category category = null;
-
                 try {
-                    category = this.categoryService.getCategoryById(updateJobDto.category()).orElse(null);
-                } catch (CategoryException $e) {
-                    CreateCategoryDto createCategoryDto = new CreateCategoryDto(updateJobDto.category());
-                    try {
-                        category = this.categoryService.createCategory(createCategoryDto);
-                    } catch (CategoryException $ex) {
-
-                    }
+                    category = categoryService.getCategoryById(String.valueOf(UUID.fromString(updateJobDto.category())))
+                            .orElseThrow(() -> new JobException("Categoria não encontrada"));
+                } catch (JobException e) {
+                    throw new RuntimeException(e);
+                } catch (CategoryException e) {
+                    throw new RuntimeException(e);
                 }
 
-                if (category != null) {
-                    job.setCategory(category);
-                    updated = true;
-                }
-            }
-
-            if (updateJobDto.descricao() != null) {
-                job.setDescricao(updateJobDto.descricao());
+                job.setCategory(category);
                 updated = true;
             }
 
@@ -165,15 +202,20 @@ public class JobService {
 
             if (updated) {
                 job.setDataAtualizacao(Instant.now());
-                this.jobRepository.save(job);
+                jobRepository.save(job);
             }
         });
     }
 
     public void deleteById(String jobId) throws JobException {
-        var id = UUID.fromString(jobId);
-        if (this.jobRepository.existsById(id)) {
-            this.jobRepository.deleteById(id);
+        UUID id = UUID.fromString(jobId);
+
+        System.out.println(jobId);
+
+        if (jobRepository.existsById(id)) {
+            jobRepository.deleteById(id);
+        } else {
+            throw new JobException("Emprego não encontrado para exclusão");
         }
     }
 }

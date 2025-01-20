@@ -2,6 +2,7 @@ package com.example.estagioja.estagioja.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -81,9 +82,9 @@ public class Company implements UserDetails {
     @Column(name = "data_inclusao")
     private Instant dataInclusao;
 
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<Job> jobs = new ArrayList<>();
+    @OneToMany(mappedBy = "company")
+    @JsonManagedReference
+    private List<Job> jobs;
 
     @JsonIgnore
     @Override
