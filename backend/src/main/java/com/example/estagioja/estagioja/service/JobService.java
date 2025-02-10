@@ -20,9 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class JobService {
@@ -109,12 +107,16 @@ public class JobService {
         Integer minSalario = filterJobDto.minSalario() != null ? filterJobDto.minSalario() : 0;
         Integer maxSalario = filterJobDto.maxSalario() != null ? filterJobDto.maxSalario() : Integer.MAX_VALUE;
 
-        Optional<Category> category = Optional.empty();
-        if (filterJobDto.category() != null && !filterJobDto.category().isEmpty()) {
+        List<Category> categories = new ArrayList<>();
+        if (filterJobDto.categories() != null && !filterJobDto.categories().isEmpty()) {
             try {
-                category = this.categoryService.getCategoryById(String.valueOf(UUID.fromString(filterJobDto.category())));
+                String[] categoryIds = filterJobDto.categories().split(",");
+                for (String categoryId : categoryIds) {
+                    Optional<Category> categoryOpt = this.categoryService.getCategoryById(categoryId.trim());
+                    categoryOpt.ifPresent(categories::add);
+                }
             } catch (CategoryException categoryException) {
-                category = Optional.empty();
+                categories = Collections.emptyList();
             }
         }
 
@@ -128,13 +130,12 @@ public class JobService {
         }
 
         Specification<Job> spec = Specification.where(JobSpecification.hasTitulo(filterJobDto.titulo()))
-                .and(JobSpecification.hasCategory(category.orElse(null)))
+                .and(JobSpecification.hasCategories(categories.isEmpty() ? null : categories))
                 .and(JobSpecification.hasCompany(company.orElse(null)))
                 .and(JobSpecification.hasMinSalario(minSalario))
                 .and(JobSpecification.hasMaxSalario(maxSalario));
 
         List<Job> jobs = jobRepository.findAll(spec);
-
 
         return jobs.stream()
                 .map(job -> new JobResponseDto(

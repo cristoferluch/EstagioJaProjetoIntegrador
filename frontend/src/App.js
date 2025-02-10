@@ -32,7 +32,6 @@ function App() {
                 <Route path="/criar-vaga" element={<CreateVaga />} />
                 <Route path="/editar-vaga/:jobId" element={<EditVaga />} />
                 <Route path="/categoria" element={<FormCategory />} />
-
             </Routes>
             <Footer />
         </Router>

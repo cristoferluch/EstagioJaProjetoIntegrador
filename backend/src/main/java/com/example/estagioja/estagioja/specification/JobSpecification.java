@@ -5,6 +5,8 @@ import com.example.estagioja.estagioja.entity.Company;
 import com.example.estagioja.estagioja.entity.Job;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
+
 public class JobSpecification {
 
     public static Specification<Job> hasTitulo(String titulo) {
@@ -30,5 +32,14 @@ public class JobSpecification {
     public static Specification<Job> hasMaxSalario(Integer maxSalario) {
         return (root, query, criteriaBuilder) ->
                 maxSalario > 0 ? criteriaBuilder.lessThanOrEqualTo(root.get("salario"), maxSalario) : null;
+    }
+
+    public static Specification<Job> hasCategories(List<Category> categories) {
+        return (root, query, criteriaBuilder) -> {
+            if (categories == null || categories.isEmpty()) {
+                return null;
+            }
+            return root.get("category").in(categories);
+        };
     }
 }

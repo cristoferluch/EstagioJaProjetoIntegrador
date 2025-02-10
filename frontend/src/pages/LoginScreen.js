@@ -88,6 +88,7 @@ const LoginForm = () => {
 
                 localStorage.setItem("token", resposta.token);
                 localStorage.setItem("id", resposta.id);
+                navigate('/');
             }
 
         } catch (error) {
@@ -96,15 +97,8 @@ const LoginForm = () => {
     };
 
     return (
-
         <Box id="container" sx={{ display: 'flex', gap: 1 }}>
-
-
             <img img src={image} style={{ width: '100%', height: 'auto' }} ></img>
-
-
-
-
 
             <form onSubmit={handleSubmit} style={{ width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
 

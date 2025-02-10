@@ -1,5 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Typography, Grid, Card, CardContent, TextField, MenuItem, Container, Paper } from '@mui/material';
+import {
+    Box,
+    Button,
+    Typography,
+    Grid,
+    Card,
+    CardContent,
+    TextField,
+    MenuItem,
+    Container,
+    Paper,
+    OutlinedInput,
+    Select,
+    Stack,
+    Chip, InputLabel, FormControl
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { height, styled, width } from '@mui/system';
 import Swal from 'sweetalert2';
@@ -14,7 +29,7 @@ const Vagas = () => {
         titulo: '',
         minSalario: '',
         maxSalario: '',
-        category: ''
+        categories: []
     });
 
     const buscarVagas = () => {
@@ -38,6 +53,7 @@ const Vagas = () => {
     }, [filtros]); 
 
     const handleInputChange = (e) => {
+        console.log(e.target);
         const { name, value } = e.target;
         setFiltros({ ...filtros, [name]: value });
     };
@@ -143,22 +159,21 @@ const Vagas = () => {
                         fullWidth
                         sx={{ maxWidth: 220 }}
                     />
-                    <TextField
-                        name="category"
-                        label="Categoria"
-                        value={filtros.category || ''}
-                        select
-                        size="small"
-                        onChange={handleInputChange}
-                        fullWidth
-                        sx={{ maxWidth: 220 }}
-                    >
-                        {categorias.map((categoria) => (
-                            <MenuItem key={categoria.id} value={categoria.id}>
-                                {categoria.titulo}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                    <FormControl sx={{ maxWidth: 220 }} size="small" fullWidth>
+                        <InputLabel>Categorias</InputLabel>
+                        <Select
+                            multiple
+                            value={filtros.categories}
+                            onChange={(e) => setFiltros({ ...filtros, categories: e.target.value })} // Atualizando corretamente o estado
+                            input={<OutlinedInput label="Categorias" />}
+                        >
+                            {categorias.map((categoria) => (
+                                <MenuItem key={categoria.id} value={categoria.id}>
+                                    {categoria.titulo}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <Button variant="contained" sx={{ height: '40px', width: '140px', backgroundColor: '#333', color: 'white' }} onClick={handleFiltrar}>Filtrar</Button>
                 </Box>
             </Container>
