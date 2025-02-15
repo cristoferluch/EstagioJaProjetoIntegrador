@@ -77,6 +77,31 @@ const Vagas = () => {
         navigate(`/categoria/`);
     }
 
+    const inscreverNaVaga = (vagaId) => {
+        const vagaKey = 'vagaInscrita-' + vagaId;
+
+        if (! localStorage.getItem('token')) {
+            return;
+        }
+
+        const vagaInscrita = localStorage.getItem(vagaKey);
+        if (vagaInscrita) {
+            localStorage.removeItem(vagaKey);
+        } else {
+            localStorage.setItem(vagaKey, 1);
+        }
+
+        window.location.reload();
+    };
+
+    const obterTextoBotao = (vaga) => {
+        if (! localStorage.getItem('token')) {
+            return 'Obrigatório logar';
+        }
+
+        return localStorage.getItem('vagaInscrita-' + vaga.id) ? 'Desinscrever' : 'Inscrever';
+    };
+
     const handleDeleteJob = async (id) => {
 
         try {
@@ -204,6 +229,16 @@ const Vagas = () => {
                                         <Typography variant="body2" color="textSecondary">Categoria: {vaga.category.titulo}</Typography>
 
                                         <Box sx={{ marginTop: 'auto', display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                                            <Button
+                                                size="small"
+                                                color="success"
+                                                sx={{
+                                                    fontWeight: 'bold',
+                                                }}
+                                                onClick={() => inscreverNaVaga(vaga.id)}
+                                            >
+                                                {obterTextoBotao(vaga)}
+                                            </Button>
                                             <Button
                                                 size="small"
                                                 color="error"
