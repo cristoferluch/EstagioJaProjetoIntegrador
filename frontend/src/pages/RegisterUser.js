@@ -125,7 +125,7 @@ const RegisterForm = () => {
 
                 <FormUser formData={formData} setFormData={setFormData} disabledFields={disabledFields} requiredFields={requiredFields} />
 
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ display: 'flex', gap: 1, marginBottom: '8px', marginTop: '8px' }}>
                     <Button type="submit" variant="outlined" fullWidth sx={{ backgroundColor: '#333', color: 'white' }}>Cadastrar</Button>
                     <Button variant="outlined" sx={{ width: '200px', borderColor: '#333', color: '#333' }} onClick={handleRegisterClick}>Voltar</Button>
                 </Box>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import InputMask from 'react-input-mask';
 import { HandleCepBlur } from '../utils/CepUtils';
+import Button from "@mui/material/Button";
 
 const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => {
 
@@ -76,6 +77,21 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => 
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <TextField name="endereco" label="Endereço" value={formData.endereco} onChange={handleChange} disabled={disabledFields.endereco} fullWidth margin="normal" required />
                 <TextField name="numero" label="Número" type="number" value={formData.numero} onChange={handleChange} disabled={disabledFields.numero} fullWidth margin="normal" required />
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                    fullWidth
+                    variant="contained"
+                    component="label"
+                    sx={{ marginBottom: '8px', marginTop: '8px' }}
+                >
+                    Currículo
+                    <input
+                        type="file"
+                        hidden
+                    />
+                </Button>
             </Box>
         </>
     );
