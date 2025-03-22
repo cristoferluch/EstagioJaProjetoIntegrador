@@ -18,12 +18,12 @@ const LoginForm = () => {
     const [formData, setFormData] = useState({
         email: location.state?.email || '',
         password: '',
-        isCompany: false,
+        is_company: false,
     });
 
     const handleRegisterClick = () => {
 
-        if (!formData.isCompany) {
+        if (!formData.is_company) {
             navigate('/cadastro');
         } else {
             navigate('/cadastroEmpresa');
@@ -53,7 +53,7 @@ const LoginForm = () => {
                 toast.onmouseleave = Swal.resumeTimer;
             },
             willClose: () => {
-                if (formData.isCompany === true) {
+                if (formData.is_company === true) {
                     navigate('/company');
                 } else {
                     navigate('/user');
@@ -62,9 +62,8 @@ const LoginForm = () => {
         });
 
         try {
-            let urlRequest = formData.isCompany === false ? 'http://localhost:8080/auth/login/user' : 'http://localhost:8080/auth/login/company';
-
-            const response = await fetch(urlRequest, {
+           
+            const response = await fetch('http://localhost:8080/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -83,11 +82,11 @@ const LoginForm = () => {
             } else {
                 Toast.fire({
                     icon: "success",
-                    title: formData.isCompany === false ? "Usuário logado com sucesso!" : "Empresa logado com sucesso!",
+                    title: formData.is_company === false ? "Usuário logado com sucesso!" : "Empresa logado com sucesso!",
                 });
 
                 localStorage.setItem("token", resposta.token);
-                localStorage.setItem("id", resposta.id);
+     
                 navigate('/');
             }
 
@@ -126,9 +125,9 @@ const LoginForm = () => {
                 />
                 <FormControlLabel
                     control={<Switch
-                        ame="isCompany"
-                        checked={formData.isCompany}
-                        onChange={(e) => setFormData({ ...formData, isCompany: e.target.checked })} />}
+                        name="is_company"
+                        checked={formData.is_company}
+                        onChange={(e) => setFormData({ ...formData, is_company: e.target.checked })} />}
                     label="É uma empresa"
                 />
 

@@ -1,0 +1,9 @@
+[database]
+DB_HOST = "aws-0-sa-east-1.pooler.supabase.com"
+DB_USER = "postgres.xubwqbaoudisymhylech"
+DB_PASSWORD = "KgMYPQGjMYvdcvaz"
+DB_NAME = "postgres"
+DB_PORT = 5432
+
+[jwt]
+JWT_KEY = "jc93Z8OTJJkLtyrBSU3rYRxP1wXI44FKYPfAwOZRh2b4g40fMD6D"
