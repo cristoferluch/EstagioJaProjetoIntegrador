@@ -9,45 +9,46 @@ const Company = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        nome: '',
+        name: '',
         email: '',
-        celular: '',
+        phone: '',
+        password: '',
         cnpj: '',
         senha: '',
-        uf: '',
-        cep: '',
-        municipio: '',
-        endereco: '',
-        bairro: '',
-        numero: '',
+        state: '',
+        postal_code: '',
+        city: '',
+        street: '',
+        district: '',
+        number: '',
     });
 
     const disabledFields = {
-        nome: false,
+        name: false,
         email: false,
-        celular: false,
+        phone: false,
         cnpj: false,
-        senha: false,
-        uf: false,
-        cep: false,
-        municipio: false,
-        endereco: false,
-        bairro: false,
-        numero: false,
+        password: false,
+        state: false,
+        postal_code: false,
+        city: false,
+        street: false,
+        district: false,
+        number: false,
     };
 
     const requiredFields = {
-        nome: true,
+        name: true,
         email: true,
-        celular: true,
+        phone: true,
         cnpj: true,
-        senha: true,
-        uf: true,
-        cep: true,
-        municipio: true,
-        endereco: true,
-        bairro: true,
-        numero: true,
+        password: true,
+        state: true,
+        postal_code: true,
+        city: true,
+        street: true,
+        district: true,
+        number: true,
     };
 
     const companyId = localStorage.getItem("id");
@@ -56,7 +57,7 @@ const Company = () => {
         const fetchCompanyData = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch(`http://localhost:8080/auth/company/${companyId}`, {
+                const response = await fetch(`http://localhost:8080/api/company/${companyId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ const Company = () => {
         try {
             const token = localStorage.getItem("token");
 
-            const response = await fetch(`http://localhost:8080/auth/update/company/${companyId}`, {
+            const response = await fetch(`http://localhost:8080/api/company/${companyId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

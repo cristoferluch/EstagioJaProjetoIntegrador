@@ -29,14 +29,14 @@ const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) 
 
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <TextField
-                    name="nome"
+                    name="name"
                     label="Nome"
                     value={formData.nome}
                     onChange={handleChange}
-                    disabled={disabledFields.nome}
+                    disabled={disabledFields.name}
                     fullWidth
                     margin="normal"
-                    required={requiredFields.nome}
+                    required={requiredFields.name}
                 />
                 <TextField
                     name="email"
@@ -54,18 +54,18 @@ const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) 
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <InputMask
                     mask="(99) 99999-9999"
-                    value={formData.celular}
+                    value={formData.phone}
                     onChange={handleChange}
-                    disabled={disabledFields.celular}
+                    disabled={disabledFields.phone}
                 >
                     {(inputProps) => (
                         <TextField
                             {...inputProps}
-                            name="celular"
+                            name="phone"
                             label="Celular"
                             fullWidth
                             margin="normal"
-                            required={requiredFields.celular}
+                            required={requiredFields.phone}
                         />
                     )}
                 </InputMask>
@@ -91,15 +91,15 @@ const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) 
 
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <TextField
-                    name="senha"
+                    name="password"
                     label="Senha"
                     type="password"
-                    value={formData.senha}
+                    value={formData.password}
                     onChange={handleChange}
-                    disabled={disabledFields.senha}
+                    disabled={disabledFields.password}
                     fullWidth
                     margin="normal"
-                    required={requiredFields.senha}
+                    required={requiredFields.password}
                     inputProps={{ minLength: 6 }}
                 />
 
@@ -107,12 +107,12 @@ const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) 
                     <InputLabel id="uf-label">UF</InputLabel>
                     <Select
                         labelId="uf-label"
-                        name="uf"
+                        name="state"
                         label="UF"
                         onChange={handleChange}
-                        value={formData.uf}
-                        disabled={disabledFields.uf}
-                        required={requiredFields.uf}
+                        value={formData.state}
+                        disabled={disabledFields.state}
+                        required={requiredFields.state}
                     >
                         {['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'].map(uf => (
                             <MenuItem key={uf} value={uf}>{uf}</MenuItem>
@@ -124,65 +124,65 @@ const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) 
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <InputMask
                     mask="99999-999"
-                    value={formData.cep}
+                    value={formData.postal_code}
                     onChange={handleChange}
-                    disabled={disabledFields.cep}
+                    disabled={disabledFields.postal_code}
                 >
                     {(inputProps) => (
                         <TextField
                             {...inputProps}
-                            name="cep"
+                            name="postal_code"
                             label="CEP"
                             fullWidth
                             margin="normal"
-                            required={requiredFields.cep}
+                            required={requiredFields.postal_code}
                         />
                     )}
                 </InputMask>
 
                 <TextField
-                    name="municipio"
+                    name="city"
                     label="Município"
-                    value={formData.municipio}
+                    value={formData.city}
                     onChange={handleChange}
-                    disabled={disabledFields.municipio}
+                    disabled={disabledFields.city}
                     fullWidth
                     margin="normal"
-                    required={requiredFields.municipio}
+                    required={requiredFields.city}
                 />
             </Box>
 
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <TextField
-                    name="endereco"
+                    name="street"
                     label="Endereço"
-                    value={formData.endereco}
+                    value={formData.street}
                     onChange={handleChange}
-                    disabled={disabledFields.endereco}
+                    disabled={disabledFields.street}
                     fullWidth
                     margin="normal"
-                    required={requiredFields.endereco}
+                    required={requiredFields.street}
                 />
                 <TextField
-                    name="bairro"
+                    name="district"
                     label="Bairro"
-                    value={formData.bairro}
+                    value={formData.district}
                     onChange={handleChange}
-                    disabled={disabledFields.bairro}
+                    disabled={disabledFields.district}
                     fullWidth
                     margin="normal"
-                    required={requiredFields.bairro}
+                    required={requiredFields.district}
                 />
                 <TextField
-                    name="numero"
+                    name="number"
                     label="Número"
                     type="number"
-                    value={formData.numero}
+                    value={formData.number}
                     onChange={handleChange}
-                    disabled={disabledFields.numero}
+                    disabled={disabledFields.number}
                     fullWidth
                     margin="normal"
-                    required={requiredFields.numero}
+                    required={requiredFields.number}
                 />
             </Box>
         </>

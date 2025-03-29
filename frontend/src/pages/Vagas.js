@@ -26,22 +26,22 @@ const Vagas = () => {
     const [vagas, setVagas] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [filtros, setFiltros] = useState({
-        titulo: '',
-        minSalario: '',
-        maxSalario: '',
-        categories: []
+        title: '',
+        minSalary: '',
+        maxSalary: '',
+        category: []
     });
 
     const buscarVagas = () => {
         const queryParams = new URLSearchParams(filtros).toString();
-        fetch(`http://localhost:8080/jobs?${queryParams}`)
+        fetch(`http://localhost:8080/api/job?${queryParams}`)
             .then(response => response.json())
             .then(vagas => setVagas(vagas))
             .catch(error => console.error('Erro ao buscar dados:', error));
     };
 
     const buscarCategorias = () => {
-        fetch(`http://localhost:8080/categories`)
+        fetch(`http://localhost:8080/api/category`)
             .then(response => response.json())
             .then(categorias => setCategorias(categorias))
             .catch(error => console.error('Erro ao buscar dados:', error));
@@ -105,7 +105,7 @@ const Vagas = () => {
     const handleDeleteJob = async (id) => {
 
         try {
-            const response = await fetch(`http://localhost:8080/jobs/${id}`, {
+            const response = await fetch(`http://localhost:8080/api/job/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -157,8 +157,8 @@ const Vagas = () => {
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
                     <TextField
                         label="Título"
-                        name="titulo"
-                        value={filtros.titulo}
+                        name="title"
+                        value={filtros.title}
                         onChange={handleInputChange}
                         size="small"
                         fullWidth
@@ -168,7 +168,7 @@ const Vagas = () => {
                         label="Salário Mínimo"
                         name="minSalario"
                         type="number"
-                        value={filtros.minSalario}
+                        value={filtros.minSalary}
                         onChange={handleInputChange}
                         size="small"
                         fullWidth
@@ -178,7 +178,7 @@ const Vagas = () => {
                         label="Salário Máximo"
                         name="maxSalario"
                         type="number"
-                        value={filtros.maxSalario}
+                        value={filtros.maxSalary}
                         onChange={handleInputChange}
                         size="small"
                         fullWidth
@@ -188,13 +188,13 @@ const Vagas = () => {
                         <InputLabel>Categorias</InputLabel>
                         <Select
                             multiple
-                            value={filtros.categories}
+                            value={filtros.category}
                             onChange={(e) => setFiltros({ ...filtros, categories: e.target.value })} // Atualizando corretamente o estado
                             input={<OutlinedInput label="Categorias" />}
                         >
                             {categorias.map((categoria) => (
                                 <MenuItem key={categoria.id} value={categoria.id}>
-                                    {categoria.titulo}
+                                    {categoria.title}
                                 </MenuItem>
                             ))}
                         </Select>

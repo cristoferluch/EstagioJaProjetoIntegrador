@@ -15,17 +15,17 @@ import { useNavigate } from 'react-router-dom';
 const RegisterCompany = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        nome: '',
+        name: '',
         email: '',
-        celular: '',
+        phone: '',
         cnpj: '',
-        senha: '',
-        cep: '',
-        uf: '',
-        municipio: '',
-        endereco: '',
-        bairro: '',
-        numero: ''
+        password: '',
+        postal_code: '',
+        state: '',
+        city: '',
+        street: '',
+        district: '',
+        number: ''
     });
 
     const handleChange = (e) => {
@@ -53,10 +53,10 @@ const RegisterCompany = () => {
                 if (!data.erro) {
                     setFormData((prevData) => ({
                         ...prevData,
-                        endereco: data.logradouro,
-                        bairro: data.bairro,
-                        municipio: data.localidade,
-                        uf: data.uf,
+                        street: data.logradouro,
+                        district: data.bairro,
+                        city: data.localidade,
+                        state: data.uf,
                     }));
                     return true;
                 } else {
@@ -94,7 +94,7 @@ const RegisterCompany = () => {
         });
 
         try {
-            const response = await fetch('http://localhost:8080/auth/register/company', {
+            const response = await fetch('http://localhost:8080/api/company', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -130,13 +130,13 @@ const RegisterCompany = () => {
                 <h2>Cadastro de Empresa</h2>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <TextField name="nome" label="Nome" value={formData.nome} onChange={handleChange} fullWidth margin="normal" required />
+                    <TextField name="name" label="Nome" value={formData.name} onChange={handleChange} fullWidth margin="normal" required />
                     <TextField name="email" label="Email" type="email" value={formData.email} onChange={handleChange} fullWidth margin="normal" required />
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <InputMask mask="(99) 99999-9999" value={formData.celular} onChange={handleChange}>
-                        {(inputProps) => <TextField {...inputProps} name="celular" label="Celular" fullWidth margin="normal" required />}
+                    <InputMask mask="(99) 99999-9999" value={formData.phone} onChange={handleChange}>
+                        {(inputProps) => <TextField {...inputProps} name="phone" label="Celular" fullWidth margin="normal" required />}
                     </InputMask>
                     <InputMask mask="99.999.999/9999-99" value={formData.cnpj} onChange={handleChange}>
                         {(inputProps) => <TextField {...inputProps} name="cnpj" label="CNPJ" fullWidth margin="normal" required />}
@@ -144,16 +144,16 @@ const RegisterCompany = () => {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <TextField name="senha" label="Senha" type="password" value={formData.senha} onChange={handleChange} fullWidth margin="normal" required inputProps={{ minLength: 6 }} />
+                    <TextField name="password" label="Senha" type="password" value={formData.password} onChange={handleChange} fullWidth margin="normal" required inputProps={{ minLength: 6 }} />
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <InputMask mask="99999-999" value={formData.cep} onChange={handleChange} onBlur={handleCepBlur}>
-                        {(inputProps) => <TextField {...inputProps} name="cep" label="CEP" fullWidth margin="normal" required />}
+                    <InputMask mask="99999-999" value={formData.postal_code} onChange={handleChange} onBlur={handleCepBlur}>
+                        {(inputProps) => <TextField {...inputProps} name="postal_code" label="CEP" fullWidth margin="normal" required />}
                     </InputMask>
                     <FormControl fullWidth margin="normal">
                         <InputLabel id="uf-label">UF</InputLabel>
-                        <Select labelId="uf-label" id="uf-select" name="uf" label="UF" onChange={handleChange} value={formData.uf} required>
+                        <Select labelId="uf-label" id="uf-select" name="state" label="UF" onChange={handleChange} value={formData.state} required>
                             {['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'].map(uf => (
                                 <MenuItem key={uf} value={uf}>{uf}</MenuItem>
                             ))}
@@ -162,13 +162,13 @@ const RegisterCompany = () => {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <TextField name="municipio" label="Município" value={formData.municipio} onChange={handleChange} fullWidth margin="normal" required />
-                    <TextField name="bairro" label="Bairro" value={formData.bairro} onChange={handleChange} fullWidth margin="normal" required />
+                    <TextField name="city" label="Município" value={formData.city} onChange={handleChange} fullWidth margin="normal" required />
+                    <TextField name="district" label="Bairro" value={formData.district} onChange={handleChange} fullWidth margin="normal" required />
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <TextField name="endereco" label="Endereço" value={formData.endereco} onChange={handleChange} fullWidth margin="normal" required />
-                    <TextField name="numero" label="Número" type="number" value={formData.numero} onChange={handleChange} fullWidth margin="normal" inputProps={{ min: 1 }} required />
+                    <TextField name="street" label="Endereço" value={formData.street} onChange={handleChange} fullWidth margin="normal" required />
+                    <TextField name="number" label="Número" type="number" value={formData.number} onChange={handleChange} fullWidth margin="normal" inputProps={{ min: 1 }} required />
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>

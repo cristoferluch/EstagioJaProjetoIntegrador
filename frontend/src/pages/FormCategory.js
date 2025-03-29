@@ -24,7 +24,7 @@ const FormWithCategories = () => {
     });
 
     const buscarCategorias = () => {
-        fetch(`http://localhost:8080/categories`)
+        fetch(`http://localhost:8080/api/category`)
             .then(response => response.json())
             .then(categorias => setCategories(categorias))
             .catch(error => console.error('Erro ao buscar dados:', error));
@@ -44,7 +44,7 @@ const FormWithCategories = () => {
 
     const handleEdit = (category) => {
         setSelectedCategory(category);
-        setFormData({ titulo: category.titulo });
+        setFormData({ titulo: category.title });
     };
 
     const handleUpdate = async (categoryId) => {
@@ -58,7 +58,7 @@ const FormWithCategories = () => {
             return;
         }
 
-        const response = await fetch(`http://localhost:8080/categories/${categoryId}`, {
+        const response = await fetch(`http://localhost:8080/api/category/${categoryId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ const FormWithCategories = () => {
     };
 
     const handleDelete = async (categoryId) => {
-        const response = await fetch(`http://localhost:8080/categories/${categoryId}`, {
+        const response = await fetch(`http://localhost:8080/api/category/${categoryId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ const FormWithCategories = () => {
             handleUpdate(selectedCategory.id);
         } else {
             console.log(formData)
-            const response = await fetch(`http://localhost:8080/categories`, {
+            const response = await fetch(`http://localhost:8080/api/category`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -168,7 +168,7 @@ const FormWithCategories = () => {
                                 categories.map((category) => (
                                     <TableRow key={category.id} hover>
                                         <TableCell onClick={() => setSelectedCategory(category)} sx={{ cursor: 'pointer' }}>
-                                            {category.titulo}
+                                            {category.title}
                                         </TableCell>
                                         <TableCell>
                                             <IconButton onClick={() => handleEdit(category)} color="primary">

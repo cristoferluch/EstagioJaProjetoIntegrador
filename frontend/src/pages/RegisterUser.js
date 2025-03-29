@@ -11,54 +11,54 @@ const RegisterForm = () => {
 
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        nome: '',
-        sobrenome: '',
+        name: '',
+        last_name: '',
         email: '',
-        senha: '',
-        celular: '',
+        password: '',
+        phone: '',
         cpf: '',
-        cep: '',
-        uf: '',
-        municipio: '',
-        endereco: '',
-        bairro: '',
-        numero: '',
-        genero: '',
-        dataNascimento: ''
+        postal_code: '',
+        state: '',
+        city: '',
+        street: '',
+        district: '',
+        number: '',
+        gender: '',
+        birth_date: ''
     });
 
     const disabledFields = {
-        nome: false,
-        sobrenome: false,
+        name: false,
+        last_name: false,
         email: false,
-        senha: false,
-        celular: false,
+        password: false,
+        phone: false,
         cpf: false,
-        cep: false,
-        uf: false,
-        municipio: false,
-        endereco: false,
-        bairro: false,
-        numero: false,
-        genero: false,
-        dataNascimento: false
+        postal_code: false,
+        state: false,
+        city: false,
+        street: false,
+        district: false,
+        number: false,
+        gender: false,
+        birth_date: false
     };
 
     const requiredFields = {
-        nome: true,
-        sobrenome: true,
+        name: true,
+        last_name: true,
         email: true,
-        senha: true,
-        celular: true,
+        password: true,
+        phone: true,
         cpf: true,
-        cep: true,
-        uf: true,
-        municipio: true,
-        endereco: true,
-        bairro: true,
-        numero: true,
-        genero: true,
-        dataNascimento: true
+        postal_code: true,
+        state: true,
+        city: true,
+        street: true,
+        district: true,
+        number: true,
+        gender: true,
+        birth_date: true
     }
 
     const handleRegisterClick = () => {
@@ -85,7 +85,7 @@ const RegisterForm = () => {
         });
 
         try {
-            const response = await fetch('http://localhost:8080/auth/register/user', {
+            const response = await fetch('http://localhost:8080/api/user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

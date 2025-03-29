@@ -6,12 +6,12 @@ import Swal from "sweetalert2";
 
 const CreateVaga = () => {
     const [formData, setFormData] = useState({
-        titulo: '',
-        descricao: '',
-        salario: '',
+        title: '',
+        description: '',
+        salary: '',
         category: '',
-        jobId: '',
-        companyId: '8a3927a6-5972-4124-8223-5d0b55b73fec',
+        id: '',
+        company_id: '8a3927a6-5972-4124-8223-5d0b55b73fec',
         customCategoria: ''
     });
 
@@ -54,13 +54,12 @@ const CreateVaga = () => {
         });
 
         try {
-            formData.jobId = '';
+            formData.id = '';
             if (formData.customCategoria) {
-
                 formData.category = formData.customCategoria;
             }
 
-            const response = await fetch('http://localhost:8080/jobs', {
+            const response = await fetch('http://localhost:8080/job', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,7 +103,7 @@ const CreateVaga = () => {
                     <TextField
                         name="titulo"
                         label="Título"
-                        value={safeFormData.titulo || ''}
+                        value={safeFormData.title || ''}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -116,7 +115,7 @@ const CreateVaga = () => {
                     <TextField
                         name="descricao"
                         label="Descrição"
-                        value={safeFormData.descricao || ''}
+                        value={safeFormData.description || ''}
                         onChange={handleChange}
                         fullWidth
                         multiline
@@ -131,7 +130,7 @@ const CreateVaga = () => {
                         name="salario"
                         label="Salário"
                         type="number"
-                        value={safeFormData.salario || ''}
+                        value={safeFormData.salary || ''}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -150,7 +149,7 @@ const CreateVaga = () => {
 
                         {categorias.map((categoria) => (
                             <MenuItem key={categoria.id} value={categoria.id}>
-                                {categoria.titulo}
+                                {categoria.title}
                             </MenuItem>
                         ))}
 

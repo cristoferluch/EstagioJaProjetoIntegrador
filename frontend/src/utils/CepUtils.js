@@ -12,10 +12,10 @@ export const HandleCepBlur = async (cep, setFormData) => {
         if (!data.erro) {
             setFormData((prevData) => ({
                 ...prevData,
-                endereco: data.logradouro,
-                bairro: data.bairro,
-                municipio: data.localidade,
-                uf: data.uf,
+                street: data.logradouro,
+                district: data.bairro,
+                city: data.localidade,
+                state: data.uf,
             }));
             return true;
         } else {

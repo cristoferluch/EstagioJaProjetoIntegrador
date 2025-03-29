@@ -8,11 +8,11 @@ const EditVaga = () => {
     const { jobId } = useParams();
 
     const [formData, setFormData] = useState({
-        titulo: '',
-        descricao: '',
-        salario: '',
+        title: '',
+        description: '',
+        salary: '',
         category: '',
-        companyId: localStorage.getItem("id"),
+        company_id: localStorage.getItem("id"),
         customCategoria: ''
     });
 
@@ -24,16 +24,16 @@ const EditVaga = () => {
     useEffect(() => {
         const fetchVaga = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/jobs/${jobId}`);
+                const response = await fetch(`http://localhost:8080/api/job/${jobId}`);
                 const vaga = await response.json();
                 if (response.ok) {
                     console.log(vaga)
                     setFormData({
-                        titulo: vaga.titulo,
-                        descricao: vaga.descricao,
-                        salario: vaga.salario,
-                        category: vaga.category.id,
-                        companyId: vaga.companyId,
+                        title: vaga.title,
+                        description: vaga.description,
+                        salary: vaga.salary,
+                        category: vaga.category,
+                        company_id: vaga.company_id,
                         customCategoria: ''
                     });
                 } else {
@@ -57,7 +57,7 @@ const EditVaga = () => {
 
         fetchVaga();
 
-        fetch('http://localhost:8080/categories')
+        fetch('http://localhost:8080/api/category')
             .then((response) => response.json())
             .then((data) => setCategorias(data))
             .catch((error) => console.error('Erro ao carregar categorias:', error));
@@ -87,7 +87,7 @@ const EditVaga = () => {
                 formData.category = formData.customCategoria;
             }
 
-            const response = await fetch(`http://localhost:8080/jobs/${jobId}`, {
+            const response = await fetch(`http://localhost:8080/api/job/${jobId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ const EditVaga = () => {
                     <TextField
                         name="titulo"
                         label="Título"
-                        value={safeFormData.titulo || ''}
+                        value={safeFormData.title || ''}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -143,7 +143,7 @@ const EditVaga = () => {
                     <TextField
                         name="descricao"
                         label="Descrição"
-                        value={safeFormData.descricao || ''}
+                        value={safeFormData.description || ''}
                         onChange={handleChange}
                         fullWidth
                         multiline
@@ -158,7 +158,7 @@ const EditVaga = () => {
                         name="salario"
                         label="Salário"
                         type="number"
-                        value={safeFormData.salario || ''}
+                        value={safeFormData.salary || ''}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -176,7 +176,7 @@ const EditVaga = () => {
                     >
                         {categorias.map((categoria) => (
                             <MenuItem key={categoria.id} value={categoria.id}>
-                                {categoria.titulo}
+                                {categoria.title}
                             </MenuItem>
                         ))}
             

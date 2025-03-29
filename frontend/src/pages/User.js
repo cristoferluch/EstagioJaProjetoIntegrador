@@ -10,41 +10,41 @@ const User = () => {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        nome: '',
-        sobrenome: '',
+        name: '',
+        last_name: '',
         email: '',
-        senha: '',
-        celular: '',
+        password: '',
+        phone: '',
         cpf: '',
-        cep: '',
-        uf: '',
-        municipio: '',
-        endereco: '',
-        bairro: '',
-        numero: '',
-        genero: '',
-        dataNascimento: ''
+        postal_code: '',
+        state: '',
+        city: '',
+        street: '',
+        district: '',
+        number: '',
+        gender: '',
+        birth_date: ''
     });
 
     const disabledFields = {
-        nome: true,
-        sobrenome: true,
+        name: true,
+        last_name: true,
         email: true,
-        senha: false,
-        celular: false,
+        password: false,
+        phone: false,
         cpf: true,
-        cep: false,
-        uf: false,
-        municipio: false,
-        endereco: false,
-        bairro: false,
-        numero: false,
-        genero: true,
-        dataNascimento: true
+        postal_code: false,
+        state: false,
+        city: false,
+        street: false,
+        district: false,
+        number: false,
+        gender: true,
+        birth_date: true
     };
 
     const requiredFields = {
-        senha: false
+        password: false
     }
 
     const userId = localStorage.getItem("id");
@@ -53,7 +53,7 @@ const User = () => {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await fetch(`http://localhost:8080/auth/user/${userId}`, {
+                const response = await fetch(`http://localhost:8080/api/user/${userId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ const User = () => {
             const userId = localStorage.getItem("id");
             const token = localStorage.getItem("token");
 
-            const response = await fetch(`http://localhost:8080/auth/update/user/${userId}`, {
+            const response = await fetch(`http://localhost:8080/api/user/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
