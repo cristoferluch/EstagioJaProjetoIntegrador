@@ -9,22 +9,19 @@ import {
     TextField,
     MenuItem,
     Container,
-    Paper,
     OutlinedInput,
     Select,
-    Stack,
-    Chip, InputLabel, FormControl
+    InputLabel, FormControl
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { height, styled, width } from '@mui/system';
+import { styled } from '@mui/system';
 import Swal from 'sweetalert2';
-
 
 const Vagas = () => {
     const navigate = useNavigate();
 
     const [vagas, setVagas] = useState([]);
-    const [categorias, setCategorias] = useState([]);
+    const [categorys, setCategorys] = useState([]);
     const [filtros, setFiltros] = useState({
         title: '',
         minSalary: '',
@@ -33,24 +30,42 @@ const Vagas = () => {
     });
 
     const buscarVagas = () => {
-        const queryParams = new URLSearchParams(filtros).toString();
-        fetch(`http://localhost:8080/api/job?${queryParams}`)
+   
+        const params = { ...filtros };
+        
+        if (params.category.length > 0) {
+            params.category = params.category.join(',');
+        } else {
+            delete params.category;
+        }
+        
+        const queryParams = new URLSearchParams(params).toString();
+        fetch(`http://localhost:8080/api/job/?${queryParams}`)
             .then(response => response.json())
             .then(vagas => setVagas(vagas))
             .catch(error => console.error('Erro ao buscar dados:', error));
     };
 
     const buscarCategorias = () => {
-        fetch(`http://localhost:8080/api/category`)
+        fetch(`http://localhost:8080/api/category/`)
             .then(response => response.json())
-            .then(categorias => setCategorias(categorias))
+            .then(categorys => setCategorys(categorys))
             .catch(error => console.error('Erro ao buscar dados:', error));
+
+       
     };
 
     useEffect(() => {
         buscarVagas();
         buscarCategorias();
-    }, [filtros]); 
+    }, [filtros]);
+
+    const handleCategoryChange = (event) => {
+        const { value } = event.target;
+        console.log(value)
+
+        setFiltros({ ...filtros, category: value });
+    };
 
     const handleInputChange = (e) => {
         console.log(e.target);
@@ -67,53 +82,57 @@ const Vagas = () => {
     };
 
     const handleEditJob = (id) => {
-
-        console.log(id)
-
         navigate(`/editar-vaga/${id}`);
     };
 
     const handleCreateCategory = (id) => {
         navigate(`/categoria/`);
-    }
-
-    const inscreverNaVaga = (vagaId) => {
-        const vagaKey = 'vagaInscrita-' + vagaId;
-
-        if (! localStorage.getItem('token')) {
-            return;
-        }
-
-        const vagaInscrita = localStorage.getItem(vagaKey);
-        if (vagaInscrita) {
-            localStorage.removeItem(vagaKey);
-        } else {
-            localStorage.setItem(vagaKey, 1);
-        }
-
-        window.location.reload();
     };
 
-    const obterTextoBotao = (vaga) => {
-        if (! localStorage.getItem('token')) {
-            return 'Obrigatório logar';
-        }
-
-        return localStorage.getItem('vagaInscrita-' + vaga.id) ? 'Desinscrever' : 'Inscrever';
-    };
-
-    const handleDeleteJob = async (id) => {
-
+    const inscreverNaVaga = async (id) => {
         try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8080/api/job/${id}/apply`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+    
+            const resposta = await response.json();
+            if (response.ok) {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Inscrição realizada com sucesso!'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: resposta.error,
+                });
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+        }
+    };
+    
+   
+    const handleDeleteJob = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/api/job/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
             });
-            
+
             const resposta = await response.json();
-            
+
             if (response.ok) {
                 setVagas((prevVagas) => prevVagas.filter(vaga => vaga.id !== id));
                 Swal.fire({
@@ -124,14 +143,14 @@ const Vagas = () => {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: resposta,
+                    text: resposta.error,
                 });
             }
 
         } catch (error) {
             console.error('Erro:', error);
         }
-    }
+    };
 
     return (
         <Box
@@ -166,7 +185,7 @@ const Vagas = () => {
                     />
                     <TextField
                         label="Salário Mínimo"
-                        name="minSalario"
+                        name="minSalary"
                         type="number"
                         value={filtros.minSalary}
                         onChange={handleInputChange}
@@ -176,7 +195,7 @@ const Vagas = () => {
                     />
                     <TextField
                         label="Salário Máximo"
-                        name="maxSalario"
+                        name="maxSalary"
                         type="number"
                         value={filtros.maxSalary}
                         onChange={handleInputChange}
@@ -189,11 +208,14 @@ const Vagas = () => {
                         <Select
                             multiple
                             value={filtros.category}
-                            onChange={(e) => setFiltros({ ...filtros, categories: e.target.value })} // Atualizando corretamente o estado
+                            onChange={handleCategoryChange}
                             input={<OutlinedInput label="Categorias" />}
+                            renderValue={(selected) => selected.map(id =>
+                                categorys.find(c => c.ID === id)?.title
+                            ).join(', ')}
                         >
-                            {categorias.map((categoria) => (
-                                <MenuItem key={categoria.id} value={categoria.id}>
+                            {categorys.map((categoria) => (
+                                <MenuItem key={categoria.ID} value={categoria.ID}>
                                     {categoria.title}
                                 </MenuItem>
                             ))}
@@ -219,14 +241,14 @@ const Vagas = () => {
                                 }}>
                                     <CardContent sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <Typography variant="h6" fontWeight="bold" color="#333">{vaga.titulo}</Typography>
+                                            <Typography variant="h6" fontWeight="bold" color="#333">{vaga.title}</Typography>
                                         </Box>
                                         <Typography variant="body2" color="textSecondary" sx={{ marginTop: 1, lineHeight: 1.5 }}>
                                             {vaga.descricao}
                                         </Typography>
-                                        <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 'bold' }}>Salário: R${vaga.salario}</Typography>
-                                       
-                                        <Typography variant="body2" color="textSecondary">Categoria: {vaga.category.titulo}</Typography>
+                                        <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 'bold' }}>Salário: R${vaga.salary}</Typography>
+
+                                        <Typography variant="body2" color="textSecondary">Categoria: {vaga.category_title}</Typography>
 
                                         <Box sx={{ marginTop: 'auto', display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
                                             <Button
@@ -237,7 +259,7 @@ const Vagas = () => {
                                                 }}
                                                 onClick={() => inscreverNaVaga(vaga.id)}
                                             >
-                                                {obterTextoBotao(vaga)}
+                                                Inscrever
                                             </Button>
                                             <Button
                                                 size="small"
@@ -264,29 +286,20 @@ const Vagas = () => {
                         ))
                     ) : (
                         <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <Typography variant="h6" color="textSecondary" sx={{ textAlign: 'center' }}>
-                                Nenhuma vaga disponível
+                            <Typography variant="h6" color="textSecondary">
+                                Nenhuma vaga encontrada!
                             </Typography>
                         </Grid>
                     )}
                 </Grid>
             </Container>
-
-
         </Box>
     );
-};
+}
 
-const StyledCard = styled(Paper)(({ theme }) => ({
-    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-    borderRadius: '8px',
-    backgroundColor: '#fff',
-    padding: theme.spacing(2),
-    '&:hover': {
-        boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.15)',
-        transform: 'translateY(-5px)',
-        transition: 'all 0.3s ease',
-    },
-}));
+const StyledCard = styled(Card)`
+    padding: 16px;
+    background-color: #f9f9f9;
+`;
 
 export default Vagas;

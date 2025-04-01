@@ -21,8 +21,8 @@ const User = () => {
         city: '',
         street: '',
         district: '',
-        number: '',
-        gender: '',
+        number: 0,
+        gender: 0,
         birth_date: ''
     });
 

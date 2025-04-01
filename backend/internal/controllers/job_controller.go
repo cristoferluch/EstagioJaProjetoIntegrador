@@ -4,7 +4,10 @@ import (
 	"backend/database"
 	"backend/internal/models"
 	"backend/internal/service"
+	"fmt"
+	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -12,17 +15,71 @@ import (
 )
 
 func GetAllJobs(c *gin.Context) {
-	var jobs []models.JobNew
+	var jobs []models.JobResponse
+	var args []interface{}
+	var conditions []string
 
-	if err := database.DB.Preload("Category").Preload("Company").Find(&jobs).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Erro ao buscar jobs",
-		})
-		return
+	title := c.Query("title")
+	minSalaryStr := c.Query("minSalary")
+	maxSalaryStr := c.Query("maxSalary")
+	category := c.Query("category")
+
+	minSalary, _ := strconv.ParseFloat(minSalaryStr, 64)
+	maxSalary, _ := strconv.ParseFloat(maxSalaryStr, 64)
+	log.Println(category)
+	query := `
+		SELECT 
+			j.id,
+			j.title,
+			j.description,
+			j.salary,
+			c.name AS company_name,
+			COALESCE(ca.title, '') AS category_title
+		FROM job_news AS j
+		INNER JOIN company_news AS c ON c.id = j.company_id
+		LEFT JOIN category_news ca ON ca.id = j.category_id
+		WHERE j.deleted_at IS NULL
+	`
+
+	if strings.TrimSpace(title) != "" {
+		conditions = append(conditions, fmt.Sprintf("j.title ILIKE $%d", len(args)+1))
+		args = append(args, "%"+title+"%")
+	}
+	if minSalary > 0 {
+		conditions = append(conditions, fmt.Sprintf("j.salary >= $%d", len(args)+1))
+		args = append(args, minSalary)
+	}
+	if maxSalary > 0 {
+		conditions = append(conditions, fmt.Sprintf("j.salary <= $%d", len(args)+1))
+		args = append(args, maxSalary)
+	}
+	if len(conditions) > 0 {
+		query += " AND " + strings.Join(conditions, " AND ")
+	}
+	if strings.TrimSpace(category) != "" {
+		query += " AND ca.id in (" + category + ")"
 	}
 
-	response := formatJobsResponse(jobs)
-	c.JSON(http.StatusOK, response)
+	query += " ORDER BY j.salary DESC"
+
+	rows, err := database.SQLDB.Query(query, args...)
+	if err != nil {
+		log.Println("ERRO [GetAllJobs][Query]:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar vagas"})
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var job models.JobResponse
+		if err := rows.Scan(&job.ID, &job.Title, &job.Description, &job.Salary, &job.CompanyName, &job.CategoryTitle); err != nil {
+			log.Println("ERRO [GetAllJobs][Scan]:", err)
+			continue
+		}
+		jobs = append(jobs, job)
+	}
+
+	c.JSON(http.StatusOK, jobs)
 }
 
 func GetJobById(c *gin.Context) {
@@ -36,7 +93,17 @@ func GetJobById(c *gin.Context) {
 		return
 	}
 
-	response := formatJobsResponse([]models.JobNew{job})
+	response := models.JobResponse{
+		ID:            job.ID,
+		Title:         job.Title,
+		Description:   job.Description,
+		Salary:        job.Salary,
+		CompanyName:   job.Company.Name,
+		CategoryTitle: job.Category.Title,
+		CompanyId:     job.Company.ID,
+		CategoryId:    job.Category.ID,
+	}
+
 	c.JSON(http.StatusOK, response)
 }
 
@@ -293,6 +360,8 @@ func formatJobsResponse(jobs []models.JobNew) []models.JobResponse {
 			Salary:        job.Salary,
 			CompanyName:   job.Company.Name,
 			CategoryTitle: job.Category.Title,
+			CompanyId:     job.Company.ID,
+			CategoryId:    job.Category.ID,
 		})
 	}
 	return response

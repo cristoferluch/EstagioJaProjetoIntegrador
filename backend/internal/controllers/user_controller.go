@@ -68,6 +68,13 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	if len(user.State) != 2 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Estado inválido",
+		})
+		return
+	}
+
 	database.DB.Create(&user)
 	c.JSON(http.StatusOK, user)
 }
@@ -130,6 +137,13 @@ func UpdateUserById(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
+		})
+		return
+	}
+
+	if len(user.State) != 2 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Estado inválido",
 		})
 		return
 	}

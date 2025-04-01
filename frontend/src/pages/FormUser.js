@@ -14,10 +14,19 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+    
+        if (name === 'number' || name === 'gender') {
+            const numericValue = parseInt(value, 10);
+            setFormData({
+                ...formData,
+                [name]: isNaN(numericValue) ? '' : numericValue,
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
     };
 
     return (
@@ -47,9 +56,9 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => 
                 <FormControl fullWidth margin="normal">
                     <InputLabel id="demo-simple-select-label">Gênero</InputLabel>
                     <Select labelId="demo-simple-select-label" id="demo-simple-select" name="gender" label="Gênero" onChange={handleChange} value={formData.gender} required>
-                        <MenuItem value="masculino">Masculino</MenuItem>
-                        <MenuItem value="feminino">Feminino</MenuItem>
-                        <MenuItem value="outro">Outro</MenuItem>
+                        <MenuItem value={1}>Masculino</MenuItem>
+                        <MenuItem value={2}>Feminino</MenuItem>
+                        <MenuItem value={3}>Outro</MenuItem>
                     </Select>
                 </FormControl>
             </Box>

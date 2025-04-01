@@ -11,6 +11,7 @@ type CompanyNew struct {
 	CNPJ       string `json:"cnpj"`
 	State      string `json:"state"`
 	City       string `json:"city"`
+	Street     string `json:"street"`
 	PostalCode string `json:"postal_code"`
 	District   string `json:"district"`
 	Number     int    `json:"number"`

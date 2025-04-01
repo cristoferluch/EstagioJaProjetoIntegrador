@@ -6,12 +6,22 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) => {
     const navigate = useNavigate();
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+    
+        if (name === 'number') {
+            const numericValue = parseInt(value, 10);
+            setFormData({
+                ...formData,
+                [name]: isNaN(numericValue) ? '' : numericValue,
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
     };
 
     return (
@@ -31,7 +41,7 @@ const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) 
                 <TextField
                     name="name"
                     label="Nome"
-                    value={formData.nome}
+                    value={formData.name}
                     onChange={handleChange}
                     disabled={disabledFields.name}
                     fullWidth
@@ -136,6 +146,7 @@ const FormCompany = ({ formData, setFormData, disabledFields, requiredFields }) 
                             fullWidth
                             margin="normal"
                             required={requiredFields.postal_code}
+                  
                         />
                     )}
                 </InputMask>

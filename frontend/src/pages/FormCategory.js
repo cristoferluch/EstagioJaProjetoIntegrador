@@ -8,7 +8,7 @@ const FormWithCategories = () => {
 
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [formData, setFormData] = useState({ titulo: '' });
+    const [formData, setFormData] = useState({ title: '' });
 
     const Toast = Swal.mixin({
         toast: true,
@@ -24,7 +24,7 @@ const FormWithCategories = () => {
     });
 
     const buscarCategorias = () => {
-        fetch(`http://localhost:8080/api/category`)
+        fetch(`http://localhost:8080/api/category/`)
             .then(response => response.json())
             .then(categorias => setCategories(categorias))
             .catch(error => console.error('Erro ao buscar dados:', error));
@@ -44,7 +44,8 @@ const FormWithCategories = () => {
 
     const handleEdit = (category) => {
         setSelectedCategory(category);
-        setFormData({ titulo: category.title });
+ 
+        setFormData({ title: category.title });
     };
 
     const handleUpdate = async (categoryId) => {
@@ -57,11 +58,12 @@ const FormWithCategories = () => {
             });
             return;
         }
-
+        const token = localStorage.getItem("token");
         const response = await fetch(`http://localhost:8080/api/category/${categoryId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(formData),
         });
@@ -72,7 +74,7 @@ const FormWithCategories = () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Erro!',
-                text: resposta.message,
+                text: resposta.error,
             });
         } else {
             Toast.fire({
@@ -84,10 +86,12 @@ const FormWithCategories = () => {
     };
 
     const handleDelete = async (categoryId) => {
+        const token = localStorage.getItem("token");
         const response = await fetch(`http://localhost:8080/api/category/${categoryId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
         });
 
@@ -97,7 +101,7 @@ const FormWithCategories = () => {
             Swal.fire({
                 icon: 'error',
                 title: 'Erro!',
-                text: resposta.message,
+                text: resposta.error,
             });
         } else {
             Toast.fire({
@@ -110,14 +114,16 @@ const FormWithCategories = () => {
 
     const handleSave = async (event) => {
         event.preventDefault();
+ 
         if (selectedCategory) {
-            handleUpdate(selectedCategory.id);
+            handleUpdate(selectedCategory.ID);
         } else {
-            console.log(formData)
-            const response = await fetch(`http://localhost:8080/api/category`, {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8080/api/category/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(formData),
                 
@@ -129,7 +135,7 @@ const FormWithCategories = () => {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: resposta.message,
+                    text: resposta.error,
                 });
             } else {
                 Toast.fire({
@@ -166,7 +172,7 @@ const FormWithCategories = () => {
                                 </TableRow>
                             ) : (
                                 categories.map((category) => (
-                                    <TableRow key={category.id} hover>
+                                    <TableRow key={category.ID} hover>
                                         <TableCell onClick={() => setSelectedCategory(category)} sx={{ cursor: 'pointer' }}>
                                             {category.title}
                                         </TableCell>
@@ -174,7 +180,7 @@ const FormWithCategories = () => {
                                             <IconButton onClick={() => handleEdit(category)} color="primary">
                                                 <EditIcon />
                                             </IconButton>
-                                            <IconButton onClick={() => handleDelete(category.id)} color="error">
+                                            <IconButton onClick={() => handleDelete(category.ID)} color="error">
                                                 <DeleteIcon />
                                             </IconButton>
                                         </TableCell>
@@ -193,10 +199,11 @@ const FormWithCategories = () => {
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
                         label="Nome"
+                        name="title"
                         fullWidth
                         variant="outlined"
-                        value={formData.titulo}
-                        name="titulo"
+                        value={formData.title}
+                  
                         onChange={handleChange}
                         sx={{ marginBottom: 2 }}
                     />

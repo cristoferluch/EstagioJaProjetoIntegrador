@@ -20,4 +20,6 @@ type JobResponse struct {
 	Salary        float64 `json:"salary"`
 	CompanyName   string  `json:"company_name"`
 	CategoryTitle string  `json:"category_title"`
+	CompanyId     uint    `json:"company_id"`
+	CategoryId    uint    `json:"category_id"`
 }

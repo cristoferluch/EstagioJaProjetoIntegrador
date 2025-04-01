@@ -2,6 +2,7 @@ package database
 
 import (
 	"backend/internal/models"
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -12,8 +13,9 @@ import (
 )
 
 var (
-	DB  *gorm.DB
-	err error
+	DB    *gorm.DB
+	SQLDB *sql.DB
+	err   error
 )
 
 func ConnectDB() {
@@ -33,6 +35,11 @@ func ConnectDB() {
 		Logger:      logger.Default.LogMode(logger.Info),
 		PrepareStmt: true,
 	})
+	if err != nil {
+		log.Panic("Erro ao conectar com banco de dados")
+	}
+
+	SQLDB, err = DB.DB()
 	if err != nil {
 		log.Panic("Erro ao conectar com banco de dados")
 	}

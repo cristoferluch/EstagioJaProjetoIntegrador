@@ -30,10 +30,19 @@ const RegisterCompany = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+    
+        if (name === 'number' ) {
+            const numericValue = parseInt(value, 10);
+            setFormData({
+                ...formData,
+                [name]: isNaN(numericValue) ? '' : numericValue,
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
     };
 
     const handleRegisterClick = () => {
@@ -41,9 +50,9 @@ const RegisterCompany = () => {
     };
 
     const handleCepBlur = async () => {
-        const { cep } = formData;
+        const { postal_code } = formData;
 
-        const cepLocal = cep.replace("-", "");
+        const cepLocal = postal_code ? postal_code.replace("-", "") : 0;
 
         if (cepLocal.length === 8) {
             try {

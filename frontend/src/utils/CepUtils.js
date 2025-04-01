@@ -1,6 +1,9 @@
 export const HandleCepBlur = async (cep, setFormData) => {
     console.log(cep)
-    const cepLocal = cep.replace(/\D/g, "");
+
+   
+    const cepLocal = cep ? cep.replace(/\D/g, "") : 0
+
 
     if (cepLocal.length != 8) {
         return false;

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, MenuItem } from '@mui/material';
-
 import { useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
 
@@ -8,35 +7,63 @@ const CreateVaga = () => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        salary: '',
-        category: '',
-        id: '',
-        company_id: '8a3927a6-5972-4124-8223-5d0b55b73fec',
-        customCategoria: ''
+        salary: 0,
+        category_id: 0,
+        company_id: 5
     });
 
     const [categorias, setCategorias] = useState([]);
-    const [showCustomCategoria, setShowCustomCategoria] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch('http://localhost:8080/categories')
-            .then((response) => response.json())
-            .then((data) => setCategorias(data))
-            .catch((error) => console.error('Erro ao carregar categorias:', error));
+        const loadCategorias = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/category/');
+                const data = await response.json();
+                setCategorias(data);
+            } catch (error) {
+                console.error('Erro ao carregar categorias:', error);
+            }
+        };
+        loadCategorias();
     }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+    
+        if (name === 'salary') {
+            const numericValue = parseFloat(value);
+            setFormData({
+                ...formData,
+                [name]: isNaN(numericValue) ? '' : numericValue,
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
+    };
+
+    const validateForm = () => {
+        if (!formData.title || !formData.description || !formData.salary || !formData.category_id) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'Todos os campos obrigatórios devem ser preenchidos!',
+            });
+            return false;
+        }
+        return true;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!validateForm()) return;
+
+        setLoading(true);
 
         const Toast = Swal.mixin({
             toast: true,
@@ -54,17 +81,20 @@ const CreateVaga = () => {
         });
 
         try {
-            formData.id = '';
-            if (formData.customCategoria) {
-                formData.category = formData.customCategoria;
-            }
-
-            const response = await fetch('http://localhost:8080/job', {
+            const requestBody = {
+                ...formData,
+            
+                category: formData.customCategoria || formData.category,
+            };
+            const token = localStorage.getItem("token");
+            const response = await fetch('http://localhost:8080/api/job/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(formData),
+               
+                body: JSON.stringify(requestBody),
             });
 
             const resposta = await response.json();
@@ -73,7 +103,7 @@ const CreateVaga = () => {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: resposta.message,
+                    text: resposta.error,
                 });
             } else {
                 Toast.fire({
@@ -81,17 +111,21 @@ const CreateVaga = () => {
                     title: "Vaga registrada com sucesso!",
                 });
             }
-
         } catch (error) {
-            console.error('Erro:', error);
+            console.error('Erro ao registrar vaga:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'Houve um erro ao tentar cadastrar a vaga. Tente novamente.',
+            });
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleClick = () => {
         navigate('/vagas');
     };
-
-    const safeFormData = formData || {};
 
     return (
         <Box id="container" sx={{ display: 'flex', gap: 5 }}>
@@ -101,9 +135,9 @@ const CreateVaga = () => {
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
-                        name="titulo"
+                        name="title"
                         label="Título"
-                        value={safeFormData.title || ''}
+                        value={formData.title}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -113,9 +147,9 @@ const CreateVaga = () => {
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
-                        name="descricao"
+                        name="description"
                         label="Descrição"
-                        value={safeFormData.description || ''}
+                        value={formData.description}
                         onChange={handleChange}
                         fullWidth
                         multiline
@@ -127,42 +161,50 @@ const CreateVaga = () => {
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
-                        name="salario"
+                        name="salary"
                         label="Salário"
                         type="number"
-                        value={safeFormData.salary || ''}
+                        value={formData.salary}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
                         required
                     />
                     <TextField
-                        name="category"
+                        name="category_id"
                         label="Categoria"
-                        value={safeFormData.category || ''}
+                        value={formData.category_id}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
                         select
                         required
                     >
-
                         {categorias.map((categoria) => (
-                            <MenuItem key={categoria.id} value={categoria.id}>
+                            <MenuItem key={categoria.ID} value={categoria.ID}>
                                 {categoria.title}
                             </MenuItem>
                         ))}
-
                     </TextField>
-
-
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button type="submit" variant="outlined" fullWidth
-                        sx={{ backgroundColor: '#333', color: 'white' }}>Cadastrar</Button>
-                    <Button variant="outlined" sx={{ width: '200px', borderColor: '#333', color: '#333' }}
-                        onClick={handleClick}>Voltar</Button>
+                    <Button
+                        type="submit"
+                        variant="outlined"
+                        fullWidth
+                        sx={{ backgroundColor: '#333', color: 'white' }}
+                        disabled={loading}
+                    >
+                        {loading ? 'Cadastrando...' : 'Cadastrar'}
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{ width: '200px', borderColor: '#333', color: '#333' }}
+                        onClick={handleClick}
+                    >
+                        Voltar
+                    </Button>
                 </Box>
             </form>
         </Box>

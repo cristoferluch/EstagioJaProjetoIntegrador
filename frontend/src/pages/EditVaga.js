@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, MenuItem } from '@mui/material';
-
 import Swal from "sweetalert2";
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -11,13 +10,11 @@ const EditVaga = () => {
         title: '',
         description: '',
         salary: '',
-        category: '',
+        category_id: '',
         company_id: localStorage.getItem("id"),
-        customCategoria: ''
     });
 
     const [categorias, setCategorias] = useState([]);
-    const [showCustomCategoria, setShowCustomCategoria] = useState(false);
 
     const navigate = useNavigate();
 
@@ -27,14 +24,12 @@ const EditVaga = () => {
                 const response = await fetch(`http://localhost:8080/api/job/${jobId}`);
                 const vaga = await response.json();
                 if (response.ok) {
-                    console.log(vaga)
                     setFormData({
                         title: vaga.title,
                         description: vaga.description,
                         salary: vaga.salary,
-                        category: vaga.category,
+                        category_id: vaga.category_id,
                         company_id: vaga.company_id,
-                        customCategoria: ''
                     });
                 } else {
                     Swal.fire({
@@ -57,7 +52,7 @@ const EditVaga = () => {
 
         fetchVaga();
 
-        fetch('http://localhost:8080/api/category')
+        fetch('http://localhost:8080/api/category/')
             .then((response) => response.json())
             .then((data) => setCategorias(data))
             .catch((error) => console.error('Erro ao carregar categorias:', error));
@@ -65,10 +60,19 @@ const EditVaga = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+    
+        if (name === 'salary') {
+            const numericValue = parseFloat(value);
+            setFormData({
+                ...formData,
+                [name]: isNaN(numericValue) ? '' : numericValue,
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -83,14 +87,12 @@ const EditVaga = () => {
         });
 
         try {
-            if (formData.customCategoria) {
-                formData.category = formData.customCategoria;
-            }
-
+            const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/api/job/${jobId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(formData),
             });
@@ -101,7 +103,7 @@ const EditVaga = () => {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: resposta.message,
+                    text: resposta.error,
                 });
             } else {
                 Toast.fire({
@@ -110,7 +112,6 @@ const EditVaga = () => {
                 });
                 navigate('/vagas');
             }
-
         } catch (error) {
             console.error('Erro:', error);
         }
@@ -120,8 +121,6 @@ const EditVaga = () => {
         navigate('/vagas');
     };
 
-    const safeFormData = formData || {};
-
     return (
         <Box id="container" sx={{ display: 'flex', gap: 5 }}>
             <form onSubmit={handleSubmit}>
@@ -129,9 +128,9 @@ const EditVaga = () => {
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
-                        name="titulo"
+                        name="title"
                         label="Título"
-                        value={safeFormData.title || ''}
+                        value={formData.title}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -141,9 +140,9 @@ const EditVaga = () => {
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
-                        name="descricao"
+                        name="description"
                         label="Descrição"
-                        value={safeFormData.description || ''}
+                        value={formData.description}
                         onChange={handleChange}
                         fullWidth
                         multiline
@@ -155,19 +154,19 @@ const EditVaga = () => {
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <TextField
-                        name="salario"
+                        name="salary"
                         label="Salário"
                         type="number"
-                        value={safeFormData.salary || ''}
+                        value={formData.salary}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
                         required
                     />
                     <TextField
-                        name="category"
+                        name="category_id"
                         label="Categoria"
-                        value={safeFormData.category || ''}
+                        value={formData.category_id}
                         onChange={handleChange}
                         fullWidth
                         margin="normal"
@@ -175,30 +174,29 @@ const EditVaga = () => {
                         required
                     >
                         {categorias.map((categoria) => (
-                            <MenuItem key={categoria.id} value={categoria.id}>
+                            <MenuItem key={categoria.ID} value={categoria.ID}>
                                 {categoria.title}
                             </MenuItem>
                         ))}
-            
                     </TextField>
-
-                    {showCustomCategoria && (
-                        <TextField
-                            name="customCategoria"
-                            label="Nova Categoria"
-                            value={safeFormData.customCategoria || ''}
-                            onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                        />
-                    )}
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                    <Button type="submit" variant="outlined" fullWidth
-                        sx={{ backgroundColor: 'black', color: 'white' }}>Salvar Alterações</Button>
-                    <Button variant="outlined" sx={{ width: '200px', borderColor: 'black', color: 'black' }}
-                        onClick={handleClick}>Voltar</Button>
+                    <Button
+                        type="submit"
+                        variant="outlined"
+                        fullWidth
+                        sx={{ backgroundColor: 'black', color: 'white' }}
+                    >
+                        Salvar Alterações
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{ width: '200px', borderColor: 'black', color: 'black' }}
+                        onClick={handleClick}
+                    >
+                        Voltar
+                    </Button>
                 </Box>
             </form>
         </Box>

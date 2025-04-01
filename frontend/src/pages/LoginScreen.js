@@ -51,13 +51,6 @@ const LoginForm = () => {
             didOpen: (toast) => {
                 toast.onmouseenter = Swal.stopTimer;
                 toast.onmouseleave = Swal.resumeTimer;
-            },
-            willClose: () => {
-                if (formData.is_company === true) {
-                    navigate('/company');
-                } else {
-                    navigate('/user');
-                }
             }
         });
 
@@ -77,7 +70,7 @@ const LoginForm = () => {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: resposta.message,
+                    text: resposta.error,
                 });
             } else {
                 Toast.fire({
@@ -86,6 +79,7 @@ const LoginForm = () => {
                 });
 
                 localStorage.setItem("token", resposta.token);
+                localStorage.setItem("id", resposta.id);
      
                 navigate('/');
             }
