@@ -1,63 +1,49 @@
 import React, { Suspense } from 'react';
-import { Link } from 'react-router-dom';
-import { Canvas } from '@react-three/fiber';
-import { Loader, useGLTF, OrbitControls, PerspectiveCamera, Stars } from '@react-three/drei';
+import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
-import sceneGlb from '../assets/scene.glb';
-import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import image from '../assets/banner.png';
+import TextField from '@mui/material/TextField';
+import Background from 'three/src/renderers/common/Background.js';
+import { Typography } from '@mui/material';
+import '@fontsource/roboto/400.css';
 
-function Model({ url }) {
-    const { nodes } = useGLTF(url)
+function Home() {
+
     return (
-        <group rotation={[-Math.PI / 2, 0, 0]} position={[0, -7, 0]} scale={7}>
-            <group rotation={[Math.PI / 13.5, -Math.PI / 5.8, Math.PI / 5.6]}>
-                <mesh receiveShadow castShadow geometry={nodes.planet002.geometry} material={nodes.planet002.material} />
-                <mesh geometry={nodes.planet003.geometry} material={nodes.planet003.material} />
-            </group>
-        </group>
+        <Box sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            alignItems: 'center',
+            position: 'relative'
+        }}>
+            <img src={image} style={{ height: 'auto', width: '100%' }} />
+            <Typography variant="h3" gutterBottom
+                sx={{
+                    position: 'absolute',
+                    right: '5%',
+                    fontWeight: 'bold'
+                }}>
+                O PORTAL DE VAGAS MAIS AMADO DO BRASIL!
+            </Typography>
+
+
+            <Box sx={{
+                display: 'flex',
+                background: 'white',
+                width: '50%',
+                padding: '20px',
+                position: 'absolute',
+                top: '100%',
+                transform: 'translateY(-50%)',
+                borderRadius: '20px',
+                boxShadow: '0px 11px 19px -3px rgba(0,0,0,0.1)'
+            }}>
+                <TextField id="outlined-basic" label="Vaga" variant="outlined" />
+            </Box>
+        </Box>
+
     )
 }
-
-export default function Home() {
-    return (
-        <>
-            {/* <p style={{ letterSpacing: '1px', fontSize: '38pt', textShadow: '#000000b8 1px 1px 5px', zIndex: 9999 }}>Explore oportunidades que vão impulsionar sua trajetória profissional e prepare-se para o futuro!</p> */}
-
-            {/* <div className="bg" /> */}
-
-            <Button
-                style={{ marginLeft: "20px", zIndex: 9999,  backgroundColor: '#333', color: 'white', marginTop: '16px' }}
-                component={Link}
-                to="/vagas"
-                variant="contained"
-                color="white">
-                Ver vagas
-            </Button>
-
-            {/* <div className="canvas-stars">
-                <Canvas dpr={[1.5, 2]} linear shadows>
-                    <fog attach="fog" args={['#272730', 16, 30]} />
-                    <ambientLight intensity={1000} />
-                    <Stars radius={500} depth={10} count={2000} factor={10} />
-                </Canvas>
-            </div>
-
-            <div className="canvas-rocket">
-                <Canvas dpr={[1.5, 2]} linear shadows>
-                    <ambientLight intensity={1} />
-                    <PerspectiveCamera makeDefault position={[15, 0, 15]} fov={80}>
-                        <pointLight intensity={1600} position={[-15, 10, -10]} />
-                        <spotLight castShadow intensity={4.25} angle={0.2} penumbra={5} position={[-25, 20, -15]} shadow-mapSize={[2048, 2048]} shadow-bias={-0.0005} />
-                    </PerspectiveCamera>
-                    <Suspense fallback={null}>
-                        <Model url={sceneGlb} />
-                    </Suspense>
-                    <OrbitControls autoRotate enablePan={false} enableZoom={false} maxPolarAngle={Math.PI / 2} minPolarAngle={Math.PI / 2} />
-                </Canvas>
-            </div> */}
-
-            <div className="layer" />
-            {/* <Loader /> */}
-        </>
-    );
-}
+export default Home;
