@@ -18,6 +18,16 @@ const CreateVaga = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (localStorage.getItem("is_company") === '0') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Sem permissão',
+                text: 'Você não tem permissão de acesso',
+            });
+
+            navigate('/');
+        }
+
         const loadCategorias = async () => {
             try {
                 const response = await fetch('http://localhost:8080/api/category/');
@@ -28,7 +38,7 @@ const CreateVaga = () => {
             }
         };
         loadCategorias();
-    }, []);
+    }, [navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

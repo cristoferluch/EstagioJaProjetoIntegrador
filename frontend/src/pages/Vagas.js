@@ -30,15 +30,15 @@ const Vagas = () => {
     });
 
     const buscarVagas = () => {
-   
+
         const params = { ...filtros };
-        
+
         if (params.category.length > 0) {
             params.category = params.category.join(',');
         } else {
             delete params.category;
         }
-        
+
         const queryParams = new URLSearchParams(params).toString();
         fetch(`http://localhost:8080/api/job/?${queryParams}`)
             .then(response => response.json())
@@ -52,7 +52,7 @@ const Vagas = () => {
             .then(categorys => setCategorys(categorys))
             .catch(error => console.error('Erro ao buscar dados:', error));
 
-       
+
     };
 
     useEffect(() => {
@@ -99,7 +99,7 @@ const Vagas = () => {
                     'Authorization': `Bearer ${token}`
                 },
             });
-    
+
             const resposta = await response.json();
             if (response.ok) {
 
@@ -118,8 +118,49 @@ const Vagas = () => {
             console.error('Erro:', error);
         }
     };
-    
-   
+
+    const EmpresaCadastro = () => {
+        if (localStorage.getItem("is_company") === '1') {
+            return (
+                <Box sx={{ backgroundColor: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                    <Typography variant="h5" fontWeight="bold" color="#333">Lista de Vagas</Typography>
+                    <Button variant="contained" sx={{ backgroundColor: '#333', color: 'white', padding: '6px' }} onClick={handleCreateCategory}>Cadastrar Categoria</Button>
+                    <Button variant="contained" sx={{ backgroundColor: '#333', color: 'white', padding: '6px' }} onClick={handleCreateJob}>Criar Vaga</Button>
+                </Box>
+            );
+        }
+
+        return ('');
+    }
+
+    const BotaoEmpresa = ({ vaga }) => {
+        if (localStorage.getItem("is_company") === '1') {
+            return (
+                <>
+                    <Button
+                        size="small"
+                        color="error"
+                        sx={{ fontWeight: 'bold' }}
+                        onClick={() => handleDeleteJob(vaga.id)}
+                    >
+                        Excluir
+                    </Button>
+                    <Button
+                        size="small"
+                        color="primary"
+                        sx={{ fontWeight: 'bold' }}
+                        onClick={() => handleEditJob(vaga.id)}
+                    >
+                        Editar
+                    </Button>
+                </>
+            );
+        }
+
+        return ('');
+    };
+ 
+
     const handleDeleteJob = async (id) => {
         try {
             const token = localStorage.getItem("token");
@@ -166,11 +207,7 @@ const Vagas = () => {
             style={{ justifyContent: 'flex-start' }}
         >
 
-            <Box sx={{ backgroundColor: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                <Typography variant="h5" fontWeight="bold" color="#333">Lista de Vagas</Typography>
-                <Button variant="contained" sx={{ backgroundColor: '#333', color: 'white', padding: '6px' }} onClick={handleCreateCategory}>Cadastrar Categoria</Button>
-                <Button variant="contained" sx={{ backgroundColor: '#333', color: 'white', padding: '6px' }} onClick={handleCreateJob}>Criar Vaga</Button>
-            </Box>
+            <EmpresaCadastro />
 
             <Container sx={{ padding: '20px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0px 0px 10px rgba(0,0,0,0.1)' }}>
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap' }}>
@@ -261,24 +298,7 @@ const Vagas = () => {
                                             >
                                                 Inscrever
                                             </Button>
-                                            <Button
-                                                size="small"
-                                                color="error"
-                                                sx={{
-                                                    fontWeight: 'bold',
-                                                }}
-                                                onClick={() => handleDeleteJob(vaga.id)}>
-                                                Excluir
-                                            </Button>
-                                            <Button
-                                                size="small"
-                                                color="primary"
-                                                sx={{
-                                                    fontWeight: 'bold',
-                                                }}
-                                                onClick={() => handleEditJob(vaga.id)}>
-                                                Editar
-                                            </Button>
+                                            <BotaoEmpresa vaga={vaga} />
                                         </Box>
                                     </CardContent>
                                 </StyledCard>

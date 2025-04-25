@@ -19,6 +19,16 @@ const EditVaga = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (localStorage.getItem("is_company") === '0') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Sem permissão',
+                text: 'Você não tem permissão de acesso',
+            });
+
+            navigate('/');
+        }
+
         const fetchVaga = async () => {
             try {
                 const response = await fetch(`http://localhost:8080/api/job/${jobId}`);

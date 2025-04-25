@@ -80,6 +80,7 @@ const LoginForm = () => {
 
                 localStorage.setItem("token", resposta.token);
                 localStorage.setItem("id", resposta.id);
+                localStorage.setItem("is_company", formData.is_company === true ? '1': '0');
      
                 navigate('/');
             }

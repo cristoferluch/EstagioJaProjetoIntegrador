@@ -3,8 +3,11 @@ import { Grid, Table, TableHead, TableBody, TableRow, TableCell, IconButton, Tex
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Swal from "sweetalert2";
+import { useNavigate } from 'react-router-dom';
 
 const FormWithCategories = () => {
+
+    const navigate = useNavigate();
 
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -31,6 +34,15 @@ const FormWithCategories = () => {
     };
 
     useEffect(() => {
+        if (localStorage.getItem("is_company") === '0') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Sem permissão',
+                text: 'Você não tem permissão de acesso',
+            });
+
+            navigate('/');
+        }
         buscarCategorias();
     }, []);
 
