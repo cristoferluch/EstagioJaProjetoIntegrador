@@ -46,9 +46,10 @@ func ConnectDB() {
 }
 
 func MigrateTables() {
-	DB.AutoMigrate(&models.UsersNew{})
-	DB.AutoMigrate(&models.CompanyNew{})
-	DB.AutoMigrate(&models.CategoryNew{})
-	DB.AutoMigrate(&models.JobNew{})
+	DB.AutoMigrate(&models.Users{})
+	DB.AutoMigrate(&models.Company{})
+	DB.AutoMigrate(&models.Category{})
+	DB.AutoMigrate(&models.Job{})
 	DB.AutoMigrate(&models.JobApplication{})
+	DB.AutoMigrate(&models.Document{})
 }

@@ -1,0 +1,764 @@
+swagger: '2.0'
+info:
+  title: Job Platform API
+  description: API for job search and application platform
+  version: 1.0.0
+host: localhost:8080
+basePath: /api
+schemes:
+  - http
+  - https
+tags:
+  - name: Auth
+    description: Authentication operations
+  - name: Users
+    description: User management
+  - name: Companies
+    description: Company management
+  - name: Jobs
+    description: Job listings and applications
+  - name: Categories
+    description: Job categories management
+  - name: Documents
+    description: User document management
+
+paths:
+  /login:
+    post:
+      tags: [Auth]
+      summary: User or company login
+      description: Authenticates a user or company and returns a JWT token
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: credentials
+          description: Login credentials
+          required: true
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: user@example.com
+              password:
+                type: string
+                example: password123
+              is_company:
+                type: boolean
+                example: false
+      responses:
+        200:
+          description: Successful login
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: JWT token
+              id:
+                type: integer
+                description: User/Company ID
+        400:
+          description: Invalid input data
+        401:
+          description: Invalid credentials
+        500:
+          description: Internal server error
+
+  /user:
+    post:
+      tags: [Users]
+      summary: Create a new user
+      description: Register a new user account
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: User data
+          required: true
+          schema:
+            $ref: '#/definitions/Users'
+      responses:
+        200:
+          description: User created successfully
+          schema:
+            $ref: '#/definitions/Users'
+        400:
+          description: Invalid input data
+        500:
+          description: Internal server error
+
+  /company:
+    post:
+      tags: [Companies]
+      summary: Create a new company
+      description: Register a new company account
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: company
+          description: Company data
+          required: true
+          schema:
+            $ref: '#/definitions/Company'
+      responses:
+        200:
+          description: Company created successfully
+          schema:
+            $ref: '#/definitions/Company'
+        400:
+          description: Invalid input data
+        500:
+          description: Internal server error
+
+  /user/{id}:
+    get:
+      tags: [Users]
+      summary: Get user by ID
+      description: Returns user details
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: User details
+          schema:
+            $ref: '#/definitions/Users'
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: User not found
+    put:
+      tags: [Users]
+      summary: Update user
+      description: Update user information
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          type: integer
+        - in: body
+          name: user
+          description: Updated user data
+          required: true
+          schema:
+            $ref: '#/definitions/Users'
+      responses:
+        200:
+          description: User updated successfully
+          schema:
+            $ref: '#/definitions/Users'
+        400:
+          description: Invalid input data
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: User not found
+    delete:
+      tags: [Users]
+      summary: Delete user
+      description: Delete user account
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: User deleted successfully
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: User not found
+
+  /company/{id}:
+    get:
+      tags: [Companies]
+      summary: Get company by ID
+      description: Returns company details
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Company ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Company details
+          schema:
+            $ref: '#/definitions/Company'
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: Company not found
+    put:
+      tags: [Companies]
+      summary: Update company
+      description: Update company information
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Company ID
+          required: true
+          type: integer
+        - in: body
+          name: company
+          description: Updated company data
+          required: true
+          schema:
+            $ref: '#/definitions/Company'
+      responses:
+        200:
+          description: Company updated successfully
+          schema:
+            $ref: '#/definitions/Company'
+        400:
+          description: Invalid input data
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: Company not found
+    delete:
+      tags: [Companies]
+      summary: Delete company
+      description: Delete company account
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Company ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Company deleted successfully
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: Company not found
+
+  /job:
+    get:
+      tags: [Jobs]
+      summary: Get all jobs
+      description: Returns a list of all available jobs with optional filters
+      parameters:
+        - name: title
+          in: query
+          description: Filter by job title
+          required: false
+          type: string
+        - name: minSalary
+          in: query
+          description: Minimum salary filter
+          required: false
+          type: number
+        - name: maxSalary
+          in: query
+          description: Maximum salary filter
+          required: false
+          type: number
+        - name: category
+          in: query
+          description: Filter by category ID
+          required: false
+          type: string
+      responses:
+        200:
+          description: List of jobs
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/JobResponse'
+        500:
+          description: Internal server error
+    post:
+      tags: [Jobs]
+      summary: Create a new job
+      description: Create a new job listing (company only)
+      security:
+        - Bearer: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: job
+          description: Job data
+          required: true
+          schema:
+            $ref: '#/definitions/Job'
+      responses:
+        200:
+          description: Job created successfully
+          schema:
+            $ref: '#/definitions/JobResponse'
+        400:
+          description: Invalid input data
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: Company or category not found
+        500:
+          description: Internal server error
+
+  /job/{id}:
+    get:
+      tags: [Jobs]
+      summary: Get job by ID
+      description: Returns job details
+      parameters:
+        - name: id
+          in: path
+          description: Job ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Job details
+          schema:
+            $ref: '#/definitions/JobResponse'
+        404:
+          description: Job not found
+    put:
+      tags: [Jobs]
+      summary: Update job
+      description: Update job information (company only)
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Job ID
+          required: true
+          type: integer
+        - in: body
+          name: job
+          description: Updated job data
+          required: true
+          schema:
+            $ref: '#/definitions/Job'
+      responses:
+        200:
+          description: Job updated successfully
+          schema:
+            $ref: '#/definitions/JobResponse'
+        400:
+          description: Invalid input data
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: Job, company or category not found
+    delete:
+      tags: [Jobs]
+      summary: Delete job
+      description: Delete job listing (company only)
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Job ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Job deleted successfully
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: Job not found
+
+  /job/{jobId}/apply:
+    post:
+      tags: [Jobs]
+      summary: Apply for a job
+      description: User applies for a job
+      security:
+        - Bearer: []
+      parameters:
+        - name: jobId
+          in: path
+          description: Job ID to apply for
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Application successful
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: Job or user not found
+        409:
+          description: User already applied for this job
+
+  /category:
+    get:
+      tags: [Categories]
+      summary: Get all categories
+      description: Returns a list of all job categories
+      responses:
+        200:
+          description: List of categories
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Category'
+    post:
+      tags: [Categories]
+      summary: Create a new category
+      description: Create a new job category (company only)
+      security:
+        - Bearer: []
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: category
+          description: Category data
+          required: true
+          schema:
+            $ref: '#/definitions/Category'
+      responses:
+        200:
+          description: Category created successfully
+          schema:
+            $ref: '#/definitions/Category'
+        400:
+          description: Invalid input data
+        403:
+          description: Forbidden - not authorized
+
+  /category/{id}:
+    get:
+      tags: [Categories]
+      summary: Get category by ID
+      description: Returns category details
+      parameters:
+        - name: id
+          in: path
+          description: Category ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Category details
+          schema:
+            $ref: '#/definitions/Category'
+        404:
+          description: Category not found
+    put:
+      tags: [Categories]
+      summary: Update category
+      description: Update category information (company only)
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Category ID
+          required: true
+          type: integer
+        - in: body
+          name: category
+          description: Updated category data
+          required: true
+          schema:
+            $ref: '#/definitions/Category'
+      responses:
+        200:
+          description: Category updated successfully
+          schema:
+            $ref: '#/definitions/Category'
+        400:
+          description: Invalid input data
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: Category not found
+    delete:
+      tags: [Categories]
+      summary: Delete category
+      description: Delete job category (company only)
+      security:
+        - Bearer: []
+      parameters:
+        - name: id
+          in: path
+          description: Category ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Category deleted successfully
+        400:
+          description: Category is linked to jobs
+        403:
+          description: Forbidden - not authorized
+        404:
+          description: Category not found
+
+  /user/upload:
+    post:
+      tags: [Documents]
+      summary: Upload user document
+      description: Upload a PDF document for the user
+      security:
+        - Bearer: []
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: file
+          in: formData
+          description: PDF file to upload
+          required: true
+          type: file
+        - name: document_type
+          in: formData
+          description: Type of document
+          required: true
+          type: string
+      responses:
+        200:
+          description: Document uploaded successfully
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              id:
+                type: integer
+              file_name:
+                type: string
+              document_type:
+                type: string
+        400:
+          description: Invalid file or no file uploaded
+        500:
+          description: Internal server error
+
+  /user/download/{id}:
+    get:
+      tags: [Documents]
+      summary: Download user document
+      description: Download a user's uploaded document
+      security:
+        - Bearer: []
+      produces:
+        - application/pdf
+      parameters:
+        - name: id
+          in: path
+          description: Document ID
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Document file
+          schema:
+            type: file
+        404:
+          description: Document not found
+        500:
+          description: Internal server error
+
+  /user/files:
+    get:
+      tags: [Documents]
+      summary: List user documents
+      description: Get a list of all documents uploaded by the user
+      security:
+        - Bearer: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: List of documents
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                created_at:
+                  type: string
+                file_name:
+                  type: string
+                file_type:
+                  type: string
+                document_type:
+                  type: string
+        500:
+          description: Internal server error
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+definitions:
+  Users:
+    type: object
+    properties:
+      id:
+        type: integer
+        readOnly: true
+      name:
+        type: string
+      last_name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+        writeOnly: true
+      phone:
+        type: string
+      cpf:
+        type: string
+      state:
+        type: string
+      city:
+        type: string
+      street:
+        type: string
+      postal_code:
+        type: string
+      district:
+        type: string
+      number:
+        type: integer
+      gender:
+        type: integer
+      birth_date:
+        type: string
+    required:
+      - name
+      - email
+      - password
+      - cpf
+      - state
+
+  Company:
+    type: object
+    properties:
+      id:
+        type: integer
+        readOnly: true
+      name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+        writeOnly: true
+      phone:
+        type: string
+      cnpj:
+        type: string
+      state:
+        type: string
+      city:
+        type: string
+      street:
+        type: string
+      postal_code:
+        type: string
+      district:
+        type: string
+      number:
+        type: integer
+    required:
+      - name
+      - email
+      - password
+      - cnpj
+      - state
+
+  Job:
+    type: object
+    properties:
+      id:
+        type: integer
+        readOnly: true
+      title:
+        type: string
+      description:
+        type: string
+      salary:
+        type: number
+      company_id:
+        type: integer
+      category_id:
+        type: integer
+    required:
+      - title
+      - description
+      - salary
+      - company_id
+      - category_id
+
+  JobResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+      description:
+        type: string
+      salary:
+        type: number
+      company_name:
+        type: string
+      category_title:
+        type: string
+      company_id:
+        type: integer
+      category_id:
+        type: integer
+
+  Category:
+    type: object
+    properties:
+      id:
+        type: integer
+        readOnly: true
+      title:
+        type: string
+      description:
+        type: string
+    required:
+      - title

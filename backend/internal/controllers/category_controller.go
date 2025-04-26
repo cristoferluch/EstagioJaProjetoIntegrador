@@ -9,14 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetAllCategorys(c *gin.Context) {
-	var category []models.CategoryNew
+func GetAllCategories(c *gin.Context) {
+	var category []models.Category
 	database.DB.Find(&category)
 	c.JSON(200, category)
 }
 
 func GetCategoryById(c *gin.Context) {
-	var category models.CategoryNew
+	var category models.Category
 	id := c.Params.ByName("id")
 	database.DB.First(&category, id)
 
@@ -31,7 +31,7 @@ func GetCategoryById(c *gin.Context) {
 }
 
 func CreateCategory(c *gin.Context) {
-	var category models.CategoryNew
+	var category models.Category
 
 	err := c.ShouldBindJSON(&category)
 
@@ -53,7 +53,7 @@ func CreateCategory(c *gin.Context) {
 }
 
 func DeleteCategoryById(c *gin.Context) {
-	var category models.CategoryNew
+	var category models.Category
 
 	id := c.Params.ByName("id")
 
@@ -66,7 +66,7 @@ func DeleteCategoryById(c *gin.Context) {
 		return
 	}
 
-	query, err := database.DB.Raw("SELECT category_id FROM job_news WHERE category_id = ?", id).Rows()
+	query, err := database.DB.Raw("SELECT category_id FROM job WHERE category_id = ?", id).Rows()
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -91,7 +91,7 @@ func DeleteCategoryById(c *gin.Context) {
 }
 
 func UpdateCategoryById(c *gin.Context) {
-	var category models.CategoryNew
+	var category models.Category
 
 	id := c.Params.ByName("id")
 

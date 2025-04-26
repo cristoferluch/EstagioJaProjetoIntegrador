@@ -12,7 +12,7 @@ import (
 )
 
 func GetAllCompanys(c *gin.Context) {
-	var company []models.CompanyNew
+	var company []models.Company
 	database.DB.Find(&company)
 	c.JSON(200, company)
 }
@@ -29,7 +29,7 @@ func GetCompanyById(c *gin.Context) {
 		return
 	}
 
-	var company models.CompanyNew
+	var company models.Company
 
 	database.DB.First(&company, id)
 
@@ -44,7 +44,7 @@ func GetCompanyById(c *gin.Context) {
 }
 
 func CreateCompany(c *gin.Context) {
-	var company models.CompanyNew
+	var company models.Company
 
 	err := c.ShouldBindJSON(&company)
 
@@ -75,7 +75,7 @@ func DeleteCompanyById(c *gin.Context) {
 		return
 	}
 
-	var company models.CompanyNew
+	var company models.Company
 	database.DB.First(&company, id)
 
 	if company.ID == 0 {
@@ -102,7 +102,7 @@ func UpdateCompanyById(c *gin.Context) {
 		return
 	}
 
-	var company models.CompanyNew
+	var company models.Company
 
 	database.DB.First(&company, id)
 

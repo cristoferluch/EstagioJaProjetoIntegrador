@@ -22,12 +22,17 @@ func HandleRequests() {
 
 	// Rotas de usuários (logado)
 	userRoutes := r.Group("/api/user")
+
 	userRoutes.Use(middleware.AuthMiddleware())
 	userRoutes.Use(middleware.RoleMiddleware("user"))
 	{
 		userRoutes.GET("/:id", controllers.GetUserById)
 		userRoutes.DELETE("/:id", controllers.DeleteUserById)
 		userRoutes.PUT("/:id", controllers.UpdateUserById)
+
+		userRoutes.POST("/upload", controllers.UserDocumentUpload)
+		userRoutes.GET("/download/:id", controllers.UserDocumentDownload)
+		userRoutes.GET("/files", controllers.UserDocumentList)
 	}
 
 	// Rotas de empresas (logada)
@@ -60,7 +65,7 @@ func HandleRequests() {
 	categoryRoutes := r.Group("/api/category")
 	{
 		// Rotas públicas
-		categoryRoutes.GET("/", controllers.GetAllCategorys)
+		categoryRoutes.GET("/", controllers.GetAllCategories)
 		categoryRoutes.GET("/:id", controllers.GetCategoryById)
 
 		// empresas (logada)

@@ -12,6 +12,6 @@ type JobApplication struct {
 	JobId     uint      `json:"job_id"`
 	AppliedAt time.Time `json:"applied_at"`
 	Status    string    `json:"status"`
-	User      UsersNew  `json:"user" gorm:"foreignKey:UserId"`
-	Job       JobNew    `json:"job" gorm:"foreignKey:JobId"`
+	User      Users     `json:"user" gorm:"foreignKey:UserId"`
+	Job       Job       `json:"job" gorm:"foreignKey:JobId"`
 }

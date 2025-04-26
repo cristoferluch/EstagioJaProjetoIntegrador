@@ -2,7 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
-type UsersNew struct {
+type Users struct {
 	gorm.Model
 	Name       string `json:"name"`
 	LastName   string `json:"last_name"`

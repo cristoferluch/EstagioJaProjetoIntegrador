@@ -26,7 +26,7 @@ func GetAllJobs(c *gin.Context) {
 
 	minSalary, _ := strconv.ParseFloat(minSalaryStr, 64)
 	maxSalary, _ := strconv.ParseFloat(maxSalaryStr, 64)
-	log.Println(category)
+
 	query := `
 		SELECT 
 			j.id,
@@ -34,10 +34,12 @@ func GetAllJobs(c *gin.Context) {
 			j.description,
 			j.salary,
 			c.name AS company_name,
-			COALESCE(ca.title, '') AS category_title
-		FROM job_news AS j
-		INNER JOIN company_news AS c ON c.id = j.company_id
-		LEFT JOIN category_news ca ON ca.id = j.category_id
+			COALESCE(ca.title, '') AS category_title,
+			c.id,
+			ca.id
+		FROM jobs AS j
+		INNER JOIN companies AS c ON c.id = j.company_id
+		LEFT JOIN categories ca ON ca.id = j.category_id
 		WHERE j.deleted_at IS NULL
 	`
 
@@ -59,7 +61,6 @@ func GetAllJobs(c *gin.Context) {
 	if strings.TrimSpace(category) != "" {
 		query += " AND ca.id in (" + category + ")"
 	}
-
 	query += " ORDER BY j.salary DESC"
 
 	rows, err := database.SQLDB.Query(query, args...)
@@ -72,7 +73,7 @@ func GetAllJobs(c *gin.Context) {
 
 	for rows.Next() {
 		var job models.JobResponse
-		if err := rows.Scan(&job.ID, &job.Title, &job.Description, &job.Salary, &job.CompanyName, &job.CategoryTitle); err != nil {
+		if err := rows.Scan(&job.ID, &job.Title, &job.Description, &job.Salary, &job.CompanyName, &job.CategoryTitle, &job.CompanyId, &job.CategoryId); err != nil {
 			log.Println("ERRO [GetAllJobs][Scan]:", err)
 			continue
 		}
@@ -83,7 +84,7 @@ func GetAllJobs(c *gin.Context) {
 }
 
 func GetJobById(c *gin.Context) {
-	var job models.JobNew
+	var job models.Job
 	id := c.Params.ByName("id")
 
 	if err := database.DB.Preload("Category").Preload("Company").First(&job, id).Error; err != nil {
@@ -111,7 +112,7 @@ func CreateJob(c *gin.Context) {
 
 	userId, _ := service.GetUserSession(c)
 
-	var job models.JobNew
+	var job models.Job
 
 	err := c.ShouldBindJSON(&job)
 	if err != nil {
@@ -122,7 +123,7 @@ func CreateJob(c *gin.Context) {
 
 	job.CompanyId = userId
 
-	var company models.CompanyNew
+	var company models.Company
 	database.DB.First(&company, userId)
 	if company.ID == 0 {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -131,7 +132,7 @@ func CreateJob(c *gin.Context) {
 		return
 	}
 
-	var category models.CategoryNew
+	var category models.Category
 	database.DB.First(&category, job.CategoryId)
 	if category.ID == 0 {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -170,7 +171,7 @@ func CreateJob(c *gin.Context) {
 		return
 	}
 
-	response := formatJobsResponse([]models.JobNew{job})
+	response := formatJobsResponse([]models.Job{job})
 	c.JSON(http.StatusOK, response)
 
 }
@@ -185,7 +186,7 @@ func DeleteJobById(c *gin.Context) {
 		return
 	}
 
-	var job models.JobNew
+	var job models.Job
 	jobId := c.Params.ByName("id")
 	database.DB.First(&job, jobId)
 
@@ -220,7 +221,7 @@ func UpdateJobById(c *gin.Context) {
 		return
 	}
 
-	var job models.JobNew
+	var job models.Job
 	id := c.Params.ByName("id")
 
 	database.DB.First(&job, id)
@@ -247,7 +248,7 @@ func UpdateJobById(c *gin.Context) {
 		return
 	}
 
-	var company models.CompanyNew
+	var company models.Company
 	database.DB.First(&company, userId)
 	if company.ID == 0 {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -256,7 +257,7 @@ func UpdateJobById(c *gin.Context) {
 		return
 	}
 
-	var category models.CategoryNew
+	var category models.Category
 	database.DB.First(&category, job.CategoryId)
 	if category.ID == 0 {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -295,7 +296,7 @@ func UpdateJobById(c *gin.Context) {
 		return
 	}
 
-	response := formatJobsResponse([]models.JobNew{job})
+	response := formatJobsResponse([]models.Job{job})
 	c.JSON(http.StatusOK, response)
 
 }
@@ -310,7 +311,7 @@ func ApplyForJob(c *gin.Context) {
 		return
 	}
 
-	var job models.JobNew
+	var job models.Job
 	jobId := c.Params.ByName("jobId")
 
 	database.DB.First(&job, jobId)
@@ -322,7 +323,7 @@ func ApplyForJob(c *gin.Context) {
 		return
 	}
 
-	var user models.UsersNew
+	var user models.Users
 	if err := database.DB.First(&user, userId).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"error": "Usuário não encontrado",
@@ -350,7 +351,7 @@ func ApplyForJob(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": "inscrição realizada com sucesso"})
 }
 
-func formatJobsResponse(jobs []models.JobNew) []models.JobResponse {
+func formatJobsResponse(jobs []models.Job) []models.JobResponse {
 	var response []models.JobResponse
 	for _, job := range jobs {
 		response = append(response, models.JobResponse{
