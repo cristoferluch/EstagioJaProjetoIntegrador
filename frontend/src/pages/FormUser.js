@@ -61,7 +61,7 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => 
             const response = await fetch('http://localhost:8080/api/user/upload', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+       
                     'Authorization': `Bearer ${token}`
                 },
                 body: formData,
@@ -69,7 +69,7 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => 
 
             const resposta = await response.json();
 
-            if (!resposta.ok) {
+            if (!response.ok) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
