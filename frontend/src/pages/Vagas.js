@@ -11,7 +11,12 @@ import {
     Container,
     OutlinedInput,
     Select,
-    InputLabel, FormControl
+    InputLabel,
+    FormControl,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
@@ -19,6 +24,9 @@ import Swal from 'sweetalert2';
 
 const Vagas = () => {
     const navigate = useNavigate();
+
+    const [vagaSelecionada, setVagaSelecionada] = useState(null);
+    const handleFecharDialog = () => setVagaSelecionada(null);
 
     const [vagas, setVagas] = useState([]);
     const [categorys, setCategorys] = useState([]);
@@ -89,7 +97,61 @@ const Vagas = () => {
         navigate(`/categoria/`);
     };
 
-    const inscreverNaVaga = async (id) => {
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            },
+            willClose: () => {
+                navigate('/user');
+            }
+        });
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('document_type', 'job');
+
+        const token = localStorage.getItem("token");
+
+        try {
+            const response = await fetch('http://localhost:8080/api/user/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData,
+            });
+
+            const resposta = await response.json();
+
+            if (!resposta.ok) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: resposta.error,
+                });
+            } else {
+                Toast.fire({
+                    icon: "success",
+                    title: "Envio do currículo com uscesso!",
+                });
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+        }
+    };
+
+    const inscreverNaVaga = async (id, message) => {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/api/job/${id}/apply`, {
@@ -105,7 +167,7 @@ const Vagas = () => {
 
                 Swal.fire({
                     icon: 'success',
-                    title: 'Inscrição realizada com sucesso!'
+                    title: message
                 });
             } else {
                 Swal.fire({
@@ -119,22 +181,130 @@ const Vagas = () => {
         }
     };
 
+    const confirmarInscricaoComUpload = async (vagaId) => {
+        const result = await Swal.fire({
+            title: 'Enviar Currículo',
+            html: `
+            <input type="file" id="upload-cv" accept=".pdf,.doc,.docx" class="swal2-file" style="display: block; margin: 1em auto;">
+        `,
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Enviar e Inscrever',
+            denyButtonText: 'Apenas e Inscrever',
+            cancelButtonText: 'Cancelar',
+            preConfirm: () => {
+                const fileInput = Swal.getPopup().querySelector('#upload-cv');
+                if (!fileInput.files[0]) {
+                    Swal.showValidationMessage('Por favor, selecione um arquivo.');
+                }
+                return fileInput.files[0];
+            }
+        });
+
+        const token = localStorage.getItem("token");
+        const file = result.value;
+
+
+        if (result.isConfirmed || result.isDenied) {
+            if (file) {
+                try {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    formData.append("document_type", "job-" + vagaId);
+
+                    const uploadResponse = await fetch(`http://localhost:8080/api/upload`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData,
+                    });
+
+                    if (!uploadResponse.ok) {
+                        const errorData = await uploadResponse.json();
+                        return Swal.fire('Erro no upload', errorData.error || 'Tente novamente.', 'error');
+                    }
+
+                    await inscreverNaVaga(vagaId, 'Currículo enviado e inscrição realizada!');
+                } catch (error) {
+                    console.error("Erro no upload:", error);
+                    Swal.fire('Erro inesperado', 'Não foi possível enviar o arquivo.', 'error');
+                }
+
+            } else {
+                await inscreverNaVaga(vagaId, 'Inscrição realizada!');
+            }
+        }
+    };
+
     const EmpresaCadastro = () => {
         if (localStorage.getItem("is_company") === '1') {
             return (
-                <Box sx={{ backgroundColor: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-                    <Typography variant="h5" fontWeight="bold" color="#333">Lista de Vagas</Typography>
-                    <Button variant="contained" sx={{ backgroundColor: '#333', color: 'white', padding: '6px' }} onClick={handleCreateCategory}>Cadastrar Categoria</Button>
-                    <Button variant="contained" sx={{ backgroundColor: '#333', color: 'white', padding: '6px' }} onClick={handleCreateJob}>Criar Vaga</Button>
-                </Box>
+
+                <>
+                    <Box
+                        sx={{
+                            position: 'relative',
+                            backgroundColor: '#fff',
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            height: '64px',
+                            paddingX: 2
+                        }}
+                    >
+                        <Typography
+                            variant="h5"
+                            fontWeight="bold"
+                            color="#333"
+                            sx={{
+                                position: 'absolute',
+                                left: '50%',
+                                transform: 'translateX(-50%)'
+                            }}
+                        >
+                            Lista de Vagas
+                        </Typography>
+
+                        <Box sx={{ marginLeft: 'auto', display: 'flex', gap: 1 }}>
+                            <Button
+                                variant="contained"
+                                sx={{ backgroundColor: '#333', color: 'white', padding: '6px' }}
+                                onClick={handleCreateCategory}
+                            >
+                                Cadastrar Categoria
+                            </Button>
+                            <Button
+                                variant="contained"
+                                sx={{ backgroundColor: '#333', color: 'white', padding: '6px' }}
+                                onClick={handleCreateJob}
+                            >
+                                Criar Vaga
+                            </Button>
+                        </Box>
+                    </Box>
+                </>
             );
         }
 
         return ('');
     }
 
+    const BotaoUsuario = ({ vaga }) => {
+        if (localStorage.getItem("is_company") == null || localStorage.getItem("is_company") === '0') {
+            return (
+                <>
+                    <Button size="small" color="dimgrey" sx={{ fontWeight: 'bold' }} onClick={() => setVagaSelecionada(vaga)}>Ver detalhes</Button>
+                </>
+            );
+        }
+
+        return ('');
+    };
+
     const BotaoEmpresa = ({ vaga }) => {
-        if (localStorage.getItem("is_company") === '1') {
+        if (localStorage.getItem("is_company") === '1' && localStorage.getItem("id") == vaga.company_id) {
             return (
                 <>
                     <Button
@@ -159,7 +329,7 @@ const Vagas = () => {
 
         return ('');
     };
- 
+
 
     const handleDeleteJob = async (id) => {
         try {
@@ -280,24 +450,15 @@ const Vagas = () => {
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <Typography variant="h6" fontWeight="bold" color="#333">{vaga.title}</Typography>
                                         </Box>
-                                        <Typography variant="body2" color="textSecondary" sx={{ marginTop: 1, lineHeight: 1.5 }}>
-                                            {vaga.descricao}
+                                        <Typography variant="body2" color="textSecondary" sx={{ marginTop: 1, lineHeight: 1.5, height: '50px' }}>
+                                            {vaga.description ? (vaga.description.replace(/<[^>]+>/g, '').length > 80 ? vaga.description.replace(/<[^>]+>/g, '').slice(0, 80) + '...' : vaga.description) : ""}
                                         </Typography>
-                                        <Typography variant="body2" color="textSecondary" sx={{ fontWeight: 'bold' }}>Salário: R${vaga.salary}</Typography>
+                                        <Typography variant="body2" color="textSecondary"><strong>Salário:</strong>: R${vaga.salary}</Typography>
+                                        <Typography variant="body2" color="textSecondary"><strong>Categoria:</strong> {vaga.category_title}</Typography>
+                                        <Typography variant="body2" color="textSecondary"><strong>Empresa:</strong> {vaga.company_name}</Typography>
 
-                                        <Typography variant="body2" color="textSecondary">Categoria: {vaga.category_title}</Typography>
-
-                                        <Box sx={{ marginTop: 'auto', display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                                            <Button
-                                                size="small"
-                                                color="success"
-                                                sx={{
-                                                    fontWeight: 'bold',
-                                                }}
-                                                onClick={() => inscreverNaVaga(vaga.id)}
-                                            >
-                                                Inscrever
-                                            </Button>
+                                        <Box sx={{ marginTop: '15px', display: 'flex', gap: 2, height: '20px', justifyContent: 'flex-end' }}>
+                                            <BotaoUsuario vaga={vaga} />
                                             <BotaoEmpresa vaga={vaga} />
                                         </Box>
                                     </CardContent>
@@ -313,6 +474,23 @@ const Vagas = () => {
                     )}
                 </Grid>
             </Container>
+
+            <Dialog open={Boolean(vagaSelecionada)} onClose={handleFecharDialog} fullWidth maxWidth="sm">
+                <DialogTitle>{vagaSelecionada?.title}</DialogTitle>
+                <DialogContent dividers>
+                    <Typography variant="body2" fontSize={15} color="black" sx={{ marginTop: 1 }}><strong>Salário:</strong> R${vagaSelecionada?.salary}</Typography>
+                    <Typography variant="body2" fontSize={15} color="black"><strong>Categoria:</strong> {vagaSelecionada?.category_title}</Typography>
+                    <Typography variant="body2" fontSize={15} color="black"><strong>Empresa:</strong> {vagaSelecionada?.company_name}</Typography>
+                    <br></br>
+                    <Typography gutterBottom dangerouslySetInnerHTML={{
+                        __html: vagaSelecionada?.description?.replace(/\n/g, '<br />')
+                    }} />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleFecharDialog} color="inherit">Fechar</Button>
+                    <Button onClick={() => { confirmarInscricaoComUpload(vagaSelecionada.id); handleFecharDialog(); }} color="success">Inscrever</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }

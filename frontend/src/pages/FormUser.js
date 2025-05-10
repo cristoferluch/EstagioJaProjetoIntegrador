@@ -3,8 +3,11 @@ import { Box, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/
 import InputMask from 'react-input-mask';
 import { HandleCepBlur } from '../utils/CepUtils';
 import Button from "@mui/material/Button";
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => {
+    const navigate = useNavigate();
 
     const handleCepBlur = (event) => {
         const cep = event.target.value;
@@ -14,7 +17,7 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-    
+
         if (name === 'number' || name === 'gender') {
             const numericValue = parseInt(value, 10);
             setFormData({
@@ -27,6 +30,86 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => 
                 [name]: value,
             });
         }
+    };
+
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            },
+            willClose: () => {
+                navigate('/user');
+            }
+        });
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('document_type', 'user');
+
+        const token = localStorage.getItem("token");
+
+        try {
+            const response = await fetch('http://localhost:8080/api/user/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData,
+            });
+
+            const resposta = await response.json();
+
+            if (!resposta.ok) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: resposta.error,
+                });
+            } else {
+                Toast.fire({
+                    icon: "success",
+                    title: "Envio do currículo com uscesso!",
+                });
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+        }
+    };
+
+    const BotaoCurriculo = () => {
+        if (localStorage.getItem("token") != null) {
+            return (
+                <>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            component="label"
+                            sx={{ marginBottom: '8px', marginTop: '8px' }}
+                        >
+                            Currículo
+                            <input
+                                type="file"
+                                hidden
+                                onChange={handleFileUpload}
+                            />
+                        </Button>
+                    </Box>
+                </>
+            );
+        }
+
+        return ('');
     };
 
     return (
@@ -88,20 +171,7 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => 
                 <TextField name="number" label="Número" type="number" value={formData.number} onChange={handleChange} disabled={disabledFields.number} fullWidth margin="normal" required />
             </Box>
 
-            <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button
-                    fullWidth
-                    variant="contained"
-                    component="label"
-                    sx={{ marginBottom: '8px', marginTop: '8px' }}
-                >
-                    Currículo
-                    <input
-                        type="file"
-                        hidden
-                    />
-                </Button>
-            </Box>
+            <BotaoCurriculo />
         </>
     );
 };

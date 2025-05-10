@@ -32,10 +32,15 @@ const settings = [
 
 function Header() {
 
+    if (localStorage.getItem("is_company") === '1') {
+        settings[0].url = '/company';
+    }
+
     const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("id");
+        localStorage.removeItem("is_company");
         navigate('/');
     };
 
@@ -160,7 +165,7 @@ function Header() {
                         ))}
                     </Box>
                     <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
+                        <Tooltip title="Perfil">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
                             </IconButton>
