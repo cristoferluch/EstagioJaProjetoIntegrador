@@ -61,7 +61,6 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => 
             const response = await fetch('http://localhost:8080/api/user/upload', {
                 method: 'POST',
                 headers: {
-       
                     'Authorization': `Bearer ${token}`
                 },
                 body: formData,
@@ -78,7 +77,7 @@ const FormUser = ({ formData, setFormData, disabledFields, requiredFields }) => 
             } else {
                 Toast.fire({
                     icon: "success",
-                    title: "Envio do currículo com uscesso!",
+                    title: "Envio do currículo com sucesso!",
                 });
             }
         } catch (error) {

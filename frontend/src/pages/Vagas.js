@@ -97,60 +97,6 @@ const Vagas = () => {
         navigate(`/categoria/`);
     };
 
-    const handleFileUpload = async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            },
-            willClose: () => {
-                navigate('/user');
-            }
-        });
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('document_type', 'job');
-
-        const token = localStorage.getItem("token");
-
-        try {
-            const response = await fetch('http://localhost:8080/api/user/upload', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData,
-            });
-
-            const resposta = await response.json();
-
-            if (!resposta.ok) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro!',
-                    text: resposta.error,
-                });
-            } else {
-                Toast.fire({
-                    icon: "success",
-                    title: "Envio do currículo com uscesso!",
-                });
-            }
-        } catch (error) {
-            console.error('Erro:', error);
-        }
-    };
-
     const inscreverNaVaga = async (id, message) => {
         try {
             const token = localStorage.getItem("token");
@@ -212,10 +158,9 @@ const Vagas = () => {
                     formData.append("file", file);
                     formData.append("document_type", "job-" + vagaId);
 
-                    const uploadResponse = await fetch(`http://localhost:8080/api/upload`, {
+                    const uploadResponse = await fetch('http://localhost:8080/api/user/upload', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'multipart/form-data',
                             'Authorization': `Bearer ${token}`
                         },
                         body: formData,

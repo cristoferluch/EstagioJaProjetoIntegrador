@@ -36,6 +36,11 @@ function Header() {
         settings[0].url = '/company';
     }
 
+    if (localStorage.getItem("is_company") == null) {
+        settings[0].title = 'Login';
+        delete settings[1];
+    }
+
     const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -64,7 +69,7 @@ function Header() {
 
     const handleClick = (element) => {
         handleCloseUserMenu();
-        if (element.text == 'Logout') {
+        if (element.title == 'Logout') {
             handleLogout();
         }
     }
